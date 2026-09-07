@@ -231,6 +231,96 @@ const ROUTES = [
   // Must sit above the generic /reports table, or "drafts" is read as an id.
   ["GET", /^\/reports\/drafts$/, () => sb.rpc("reports_drafts").then(unwrap)],
 
+  // ---- the action buttons ----------------------------------------------
+  // The screens listed and read fine; these are the buttons ON them. Each
+  // is a state transition with a guard, so each is a function rather than
+  // a table write — a status toggle that also cancels the diary, or an
+  // approval that moves stock, is not a PATCH.
+  ["GET",  /^\/health$/, () => sb.rpc("health").then(unwrap)],
+  ["GET",  /^\/audit$/, (m, b, q) =>
+      sb.rpc("list_audit", { p_limit: Number(q.limit) || 100 }).then(unwrap)],
+  ["GET",  /^\/search$/, (m, b, q) => sb.rpc("search", { p_q: q.q || "" }).then(unwrap)],
+  // Must sit above the generic /issues table, or "balance" is read as an id.
+  ["GET",  /^\/issues\/balance$/, (m, b, q) => sb.rpc("issues_balance", {
+      p_agent_id: q.agent_id ? Number(q.agent_id) : null }).then(unwrap)],
+  // Leads is an ENVELOPE — {items, counts} — not the bare array the generic
+  // table returns, and the counts are of ALL leads so filtering cannot
+  // change the chips you filter by.
+  ["GET",  /^\/leads$/, (m, b, q) =>
+      sb.rpc("list_leads", { p_status: q.status || null }).then(unwrap)],
+  ["POST", /^\/leads\/(\d+)\/convert$/, (m) =>
+      sb.rpc("convert_lead", { p_id: Number(m[1]) }).then(unwrap)],
+
+  ["POST", /^\/clients\/(\d+)\/status$/, (m, b) => sb.rpc("set_client_status", {
+      p_client_id: Number(m[1]), p_status: b.status,
+      p_cancel_visits: !!b.cancel_visits }).then(unwrap)],
+  ["POST", /^\/sites\/(\d+)\/status$/, (m, b) => sb.rpc("set_site_status", {
+      p_site_id: Number(m[1]), p_status: b.status,
+      p_cancel_visits: !!b.cancel_visits }).then(unwrap)],
+  ["POST", /^\/clients\/(\d+)\/sites$/, (m, b) => sb.rpc("add_site", {
+      p_client_id: Number(m[1]), p_name: b.name, p_address: b.address || null,
+      p_area: b.area || null, p_area_id: b.area_id ? Number(b.area_id) : null,
+      p_visits_per_month: b.visits_per_month ?? 1,
+      p_visit_minutes: b.visit_minutes ?? 60,
+      p_service_from: b.service_from || "09:00",
+      p_service_to: b.service_to || "17:00" }).then(unwrap)],
+
+  ["POST", /^\/visits\/(\d+)\/checkin$/, (m, b) => sb.rpc("visit_checkin", {
+      p_visit_id: Number(m[1]), p_lat: b?.lat ?? null,
+      p_lng: b?.lng ?? null, p_acc: b?.acc ?? null }).then(unwrap)],
+  ["POST", /^\/visits\/(\d+)\/checkout$/, (m, b) => sb.rpc("visit_checkout", {
+      p_visit_id: Number(m[1]), p_lat: b?.lat ?? null,
+      p_lng: b?.lng ?? null, p_acc: b?.acc ?? null }).then(unwrap)],
+  ["POST", /^\/visits\/(\d+)\/rating$/, (m, b) => sb.rpc("rate_visit", {
+      p_visit_id: Number(m[1]), p_stars: Number(b.stars),
+      p_comment: b.comment || null }).then(unwrap)],
+  ["POST", /^\/visits\/(\d+)\/signature$/, (m, b) => sb.rpc("save_signature", {
+      p_visit_id: Number(m[1]), p_customer_name: b.customer_name || null,
+      p_signature: b.signature || null }).then(unwrap)],
+  ["POST", /^\/visits\/(\d+)\/usage$/, (m, b) => sb.rpc("record_usage", {
+      p_visit_id: Number(m[1]), p_chemical_id: Number(b.chemical_id),
+      p_quantity: Number(b.quantity), p_area_treated: b.area_treated || null }).then(unwrap)],
+  ["DELETE", /^\/usage\/(\d+)$/, (m) =>
+      sb.rpc("delete_usage", { p_id: Number(m[1]) }).then(unwrap)],
+
+  ["POST", /^\/chemicals\/(\d+)\/stock$/, (m, b) => sb.rpc("adjust_stock", {
+      p_chemical_id: Number(m[1]), p_change: Number(b.change),
+      p_reason: b.reason || "adjustment", p_note: b.note || null }).then(unwrap)],
+  ["GET",  /^\/chemicals\/(\d+)\/transactions$/, (m) =>
+      sb.rpc("chemical_transactions", { p_chemical_id: Number(m[1]) }).then(unwrap)],
+
+  // Materials out, and materials back.
+  ["POST", /^\/issues\/(\d+)\/approve$/, (m) =>
+      sb.rpc("approve_issue", { p_id: Number(m[1]) }).then(unwrap)],
+  ["POST", /^\/issues\/(\d+)\/decline$/, (m, b) =>
+      sb.rpc("decline_issue", { p_id: Number(m[1]), p_reason: b?.reason || null }).then(unwrap)],
+  ["POST", /^\/issues\/(\d+)\/receive$/, (m, b) => sb.rpc("receipt_issue", {
+      p_id: Number(m[1]), p_state: "received", p_note: b?.note || null }).then(unwrap)],
+  ["POST", /^\/issues\/(\d+)\/dispute$/, (m, b) => sb.rpc("receipt_issue", {
+      p_id: Number(m[1]), p_state: "disputed",
+      p_note: b?.reason || b?.note || null }).then(unwrap)],
+
+  ["POST", /^\/returns\/(\d+)\/(approve|decline|receive|dispute)$/, (m, b) =>
+      sb.rpc("handle_return", { p_id: Number(m[1]), p_action: m[2],
+        p_note: b?.reason || b?.note || null }).then(unwrap)],
+
+  ["POST", /^\/cash\/(\d+)\/(approve|decline)$/, (m, b) => sb.rpc("handle_cash", {
+      p_id: Number(m[1]), p_action: m[2],
+      p_amount: b?.amount != null ? Number(b.amount) : null,
+      p_reason: b?.reason || null }).then(unwrap)],
+
+  ["POST", /^\/visit-requests\/(\d+)\/(approve|decline)$/, (m, b) =>
+      sb.rpc("handle_visit_request", {
+        p_id: Number(m[1]), p_action: m[2],
+        p_scheduled_start: b?.scheduled_start || null,
+        p_agent_id: b?.agent_id ? Number(b.agent_id) : null,
+        p_service_type_id: b?.service_type_id ? Number(b.service_type_id) : null,
+        p_site_id: b?.site_id ? Number(b.site_id) : null,
+        p_reason: b?.reason || null }).then(unwrap)],
+
+  ["POST", /^\/notifications\/read$/, (m, b) => sb.rpc("mark_notifications_read", {
+      p_ids: Array.isArray(b?.ids) && b.ids.length ? b.ids.map(Number) : null }).then(unwrap)],
+
   // ---- the QR scan chain ------------------------------------------------
   // A trap's printed label encodes <host>/scan/<CODE>. The engineer lands
   // here, sees what was found at it before and what the last visit promised,

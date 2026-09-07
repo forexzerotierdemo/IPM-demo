@@ -107,7 +107,7 @@ To re-baseline after deliberately changing the seed:
 
 ```
 demo/
-  migrations/    01–36, applied in order. The whole database.
+  migrations/    01–40, applied in order. The whole database.
   web/           what Vercel serves. The live static/ tree with ONE file changed.
   supabase/functions/api/   the catch-all Edge Function for the computed routes.
   tools/         scripts to apply, verify and deploy. No CLI needed for any of it.
@@ -290,6 +290,8 @@ cp .env.example .env       # then fill it in
    node tools/smoke.js
    node tools/test-dispatch.js         # the board, shape by shape
    node tools/test-scan.js             # the QR chain, scan to report
+   node tools/test-actions.js          # the buttons on the screens
+   node tools/reseed.js                # put the demo data back after testing
    ```
 
 ## Corrections to the build guide

@@ -46,6 +46,26 @@ const SHIM = [
   [/^\/devices\/\(\\d\+\)\/history$/, 'RPC device_history'],
   [/^\/visits\/\(\\d\+\)\/devices$/, 'RPC visit_devices'],
   [/^\/visits\/\(\\d\+\)\/followup$/, 'RPC visit_followup'],
+  // The action buttons (37_actions.sql) and search (38_search.sql).
+  [/^\/health$/, 'RPC health'],
+  [/^\/audit$/, 'RPC list_audit'],
+  [/^\/search$/, 'RPC search'],
+  [/^\/clients\/\(\\d\+\)\/status$/, 'RPC set_client_status'],
+  [/^\/sites\/\(\\d\+\)\/status$/, 'RPC set_site_status'],
+  [/^\/clients\/\(\\d\+\)\/sites$/, 'RPC add_site'],
+  [/^\/visits\/\(\\d\+\)\/checkin$/, 'RPC visit_checkin'],
+  [/^\/visits\/\(\\d\+\)\/checkout$/, 'RPC visit_checkout'],
+  [/^\/visits\/\(\\d\+\)\/rating$/, 'RPC rate_visit'],
+  [/^\/visits\/\(\\d\+\)\/signature$/, 'RPC save_signature'],
+  [/^\/visits\/\(\\d\+\)\/usage$/, 'RPC record_usage'],
+  [/^\/usage\/\(\\d\+\)$/, 'RPC delete_usage'],
+  [/^\/chemicals\/\(\\d\+\)\/stock$/, 'RPC adjust_stock'],
+  [/^\/chemicals\/\(\\d\+\)\/transactions$/, 'RPC chemical_transactions'],
+  [/^\/issues\/\(\\d\+\)\/(approve|decline|receive|dispute)$/, 'RPC issue actions'],
+  [/^\/returns\/\(\\d\+\)\/(approve|decline|receive|dispute)$/, 'RPC handle_return'],
+  [/^\/cash\/\(\\d\+\)\/(approve|decline)$/, 'RPC handle_cash'],
+  [/^\/visit-requests\/\(\\d\+\)\/(approve|decline)$/, 'RPC handle_visit_request'],
+  [/^\/notifications\/read$/, 'RPC mark_notifications_read'],
 ];
 
 // The shim's GENERIC resource table answers /<resource> and /<resource>/<id>
