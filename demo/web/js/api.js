@@ -153,13 +153,25 @@ function applyQuery(sel, res, q) {
 const ROUTES = [
   // ---- auth -------------------------------------------------------------
   ["POST", /^\/auth\/login$/, async (m, body) => {
+    const email = (body.email || "").trim().toLowerCase();
     const { data, error } = await sb.auth.signInWithPassword({
-      email: (body.email || "").trim().toLowerCase(), password: body.password,
+      email, password: body.password,
     });
     if (error) throw new Error("Invalid email or password");
+    // The trial account is a sandbox: it starts clean every time. Resetting
+    // on the way IN is the half that matters — the previous visitor almost
+    // never signs out, they just close the tab.
+    await resetIfTrial(email);
     return { token: data.session.access_token, user: await profile() };
   }],
-  ["POST", /^\/auth\/logout$/, async () => { await sb.auth.signOut(); return { ok: true }; }],
+  ["POST", /^\/auth\/logout$/, async () => {
+    // ...and again on the way out, so the demo is pristine the moment they
+    // finish rather than only when the next person arrives.
+    const { data: { user } } = await sb.auth.getUser().catch(() => ({ data: {} }));
+    await resetIfTrial(user && user.email);
+    await sb.auth.signOut();
+    return { ok: true };
+  }],
   // app.js does `API.setAuth(API.token, await API.get("/auth/me"))`, so this
   // returns the profile itself — NOT wrapped in {user}, which is what
   // _me_payload() returned and what the guide's draft shim got wrong.
@@ -205,6 +217,41 @@ const ROUTES = [
       p_visit_ids: b.visit_ids || (b.visit_id ? [b.visit_id] : []),
       p_agent_id: Number(b.agent_id), p_date: b.date,
     }).then(unwrap)],
+
+  // ---- analytics, the permission catalogue and the drafts queue --------
+  // All SQL functions. analytics() in particular is SECURITY INVOKER on
+  // purpose: the Python handler's scope() is twenty lines of role branching
+  // that the §6 policies already perform, so a supervisor's numbers are
+  // their patch's without this file knowing anything about roles.
+  ["GET", /^\/analytics$/, (m, b, q) => sb.rpc("analytics", {
+      p_from: q.from || null, p_to: q.to || null,
+      p_client_id: q.client_id ? Number(q.client_id) : null,
+      p_site_id: q.site_id || null,
+    }).then(unwrap)],
+  ["GET", /^\/permissions\/catalog$/, () => sb.rpc("permissions_catalog").then(unwrap)],
+  // Must sit above the generic /reports table, or "drafts" is read as an id.
+  ["GET", /^\/reports\/drafts$/, () => sb.rpc("reports_drafts").then(unwrap)],
+
+  // ---- the QR device registry ------------------------------------------
+  ["POST", /^\/devices\/generate$/, (m, b) => sb.rpc("devices_generate", {
+      p_type: b.type, p_count: Number(b.count),
+      p_client_id: b.client_id ? Number(b.client_id) : null,
+      p_site_id: b.site_id ? Number(b.site_id) : null,
+      p_placement: b.placement || null,
+    }).then(unwrap)],
+  ["POST", /^\/devices\/assign$/, (m, b) => sb.rpc("devices_assign", {
+      p_ids: (b.ids || []).map(Number),
+      p_client_id: Number(b.client_id),
+      p_site_id: b.site_id ? Number(b.site_id) : null,
+    }).then(unwrap)],
+
+  // ---- one client's own pages ------------------------------------------
+  ["GET", /^\/clients\/(\d+)\/analytics$/, (m, b, q) => sb.rpc("client_analytics", {
+      p_client_id: Number(m[1]), p_site_id: q.site_id || null }).then(unwrap)],
+  ["GET", /^\/clients\/(\d+)\/statement$/, (m, b, q) => sb.rpc("client_statement", {
+      p_client_id: Number(m[1]), p_site_id: q.site_id || null }).then(unwrap)],
+  ["GET", /^\/clients\/(\d+)\/pest-trends$/, (m, b, q) => sb.rpc("client_pest_trends", {
+      p_client_id: Number(m[1]), p_site_id: q.site_id || null }).then(unwrap)],
 
   // ---- the field-staff projection --------------------------------------
   ["GET", /^\/agents$/, () => sb.from("v_users").select("*")
@@ -289,6 +336,20 @@ async function generic(method, path, body, q) {
     if (method === "DELETE" &&  id) return del(res.write, id);
     return undefined;
   });
+}
+
+// ------------------------------------------------------- the sandbox
+// The trial login is for handing to a prospect: they may edit, create and
+// delete anything, and none of it survives the session. demo_reset() puts
+// the whole dataset back from a snapshot the trial user cannot reach.
+//
+// Failure here is deliberately swallowed. A reset that does not run leaves
+// the demo untidy; a reset whose error blocks the login leaves the prospect
+// staring at "Invalid email or password", which is far worse.
+async function resetIfTrial(email) {
+  const trial = (window.__TRIAL_EMAIL__ || "").toLowerCase();
+  if (!trial || !email || email.toLowerCase() !== trial) return;
+  try { await sb.rpc("demo_reset"); } catch (e) { /* untidy, not broken */ }
 }
 
 // The public.users row for the signed-in account, shaped like the old

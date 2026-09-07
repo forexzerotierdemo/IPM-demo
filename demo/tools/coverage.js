@@ -31,6 +31,14 @@ const SHIM = [
   [/^\/shifts\/week$/, 'RPC shift_week'],
   [/^\/visits\/\(\\d\+\)\/report$/, 'shim: upsert report'],
   [/^\/dispatch\/optimize$/, 'Edge Function'],
+  [/^\/analytics$/, 'RPC analytics'],
+  [/^\/permissions\/catalog$/, 'RPC permissions_catalog'],
+  [/^\/reports\/drafts$/, 'RPC reports_drafts'],
+  [/^\/devices\/generate$/, 'RPC devices_generate'],
+  [/^\/devices\/assign$/, 'RPC devices_assign'],
+  [/^\/clients\/\(\\d\+\)\/analytics$/, 'RPC client_analytics'],
+  [/^\/clients\/\(\\d\+\)\/statement$/, 'RPC client_statement'],
+  [/^\/clients\/\(\\d\+\)\/pest-trends$/, 'RPC client_pest_trends'],
 ];
 
 // The shim's GENERIC resource table answers /<resource> and /<resource>/<id>

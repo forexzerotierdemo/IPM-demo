@@ -14,10 +14,41 @@ auth, storage and the computed routes; Vercel for the static front end.
 | `engineer@demo.foxcrm.app` | `demo1234` | The phone view — his own round only |
 | `engineer2@demo.foxcrm.app` | `demo1234` | A second engineer, so the roster has two people |
 | `client@demo.foxcrm.app` | `demo1234` | The customer portal, in Arabic — one company |
+| `trial@demo.foxcrm.app` | `trial1234` | **The one to hand a prospect.** Full admin, and nothing they do survives — see below |
 
 The passwords are deliberately weak and public. **This project must therefore
 contain nothing real, ever** — no live customer, no live photo, no live
 paperwork. See `../docs/supabase-demo/README-GUIDE.md` §10.1.
+
+Every row in it is invented: four made-up companies (Al Noor Restaurant, Nile
+View Hotel, Green Valley School, Fresh Mart Supermarket), made-up staff and
+phone numbers, twenty branches, a couple of hundred visits. Nothing was ever
+copied from the live system — only its *source code* was read, to match
+response shapes.
+
+## The trial account
+
+`trial@demo.foxcrm.app` / `trial1234` is the login to send to someone deciding
+whether to buy. They get the full admin view and may create, edit and delete
+anything — that is the point. The whole dataset is then restored from a
+snapshot:
+
+* when they sign **out** — they finished; and
+* when they sign **in** — because the previous visitor almost never signs out,
+  they just close the tab. This is the half that actually matters.
+
+The snapshot lives in a `demo_snapshot` schema that is not exposed to
+PostgREST, so a trial user can wreck `public` all they like and never reach the
+master copy. A reset takes about half a second.
+
+> **It is one shared sandbox, not a private copy each.** Two people testing at
+> the same time see each other's edits, and whoever signs in second wipes the
+> first one's work mid-session — including a colleague demoing as `admin`. For
+> a link sent to one prospect at a time that is fine. It is not a multi-tenant
+> trial and should not be sold as one.
+
+To re-baseline after deliberately changing the seed:
+`node tools/sql.js "select demo_snapshot_take()"`.
 
 ---
 
@@ -25,7 +56,7 @@ paperwork. See `../docs/supabase-demo/README-GUIDE.md` §10.1.
 
 ```
 demo/
-  migrations/    01–23, applied in order. The whole database.
+  migrations/    01–29, applied in order. The whole database.
   web/           what Vercel serves. The live static/ tree with ONE file changed.
   supabase/functions/api/   the catch-all Edge Function for the computed routes.
   tools/         scripts to apply, verify and deploy. No CLI needed for any of it.
@@ -167,6 +198,9 @@ computed** routes, these are ported —
 
 - `/dashboard`, the owner cockpit and the SLA tiering, as **RPCs** rather than
   Edge Functions (§9.1's own advice: the easy aggregates belong in SQL)
+- **Analytics**, the **permission catalogue**, the **report-drafts queue**,
+  **minting and assigning QR devices**, and one client's **analytics**,
+  **statement** and **pest-trends** pages — all SQL functions
 - **the whole dispatch board** — `/dispatch/grid`, `/cell`, `/sla` and `/move`
   as SQL functions, and `/shifts/week` with it, because app.js only shows the
   day/week/month selector once that call succeeds
@@ -174,8 +208,9 @@ computed** routes, these are ported —
   one part of the board that genuinely needs a procedural language
 - `/visits/:id/followup` and `/engineers/scorecard`, in the Edge Function
 
-— and the rest are not: `finance/*`, analytics, capacity, service-gaps,
-pipeline, search, certificates, and the report PDF. The Edge Function answers
+— and the rest are not: `finance/*`, capacity, service-gaps, cost-to-serve,
+pipeline, search, backup/restore, branch-schedule, the CSV/XLSX exports, and
+the report PDF. The Edge Function answers
 those with `501` and `{"error": "Not available in this demo"}`, which app.js
 renders in its own empty-state style — an unfinished screen says **"⚠️ Not
 available in this demo"** rather than blanking or throwing.
