@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Trial history — Fox CRM demo</title>
+<!--
+  An OPERATOR tool, not a product feature: who has been round the demo and
+  what they touched. Deliberately its own page rather than a screen inside
+  the CRM — app.js is not ours to edit, and a prospect should never see a
+  list of other prospects.
+
+  Admin only. trial_sessions_list() and trial_session_activity() both refuse
+  any role but admin, so the gate is in the database, not in this page.
+-->
+<link rel="icon" href="/favicon.ico">
+<style>
+  :root { --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; --bg:#f1f5f9;
+          --card:#fff; --blue:#2563eb; --green:#16a34a; --amber:#d97706; --red:#dc2626; }
+  * { box-sizing:border-box }
+  body { margin:0; font:15px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;
+         color:var(--ink); background:var(--bg) }
+  header { background:#0b1220; color:#fff; padding:14px 20px; display:flex;
+           align-items:center; gap:12px; flex-wrap:wrap }
+  header h1 { font-size:17px; margin:0; font-weight:600 }
+  header .sp { flex:1 }
+  main { max-width:1100px; margin:0 auto; padding:20px }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px;
+          padding:16px; margin-bottom:16px }
+  table { width:100%; border-collapse:collapse; font-size:14px }
+  th,td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--line) }
+  th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase;
+       letter-spacing:.03em }
+  tbody tr { cursor:pointer }
+  tbody tr:hover { background:#f8fafc }
+  .pill { display:inline-block; padding:1px 8px; border-radius:999px; font-size:12px;
+          font-weight:600 }
+  .live { background:#dcfce7; color:var(--green) }
+  .done { background:#f1f5f9; color:var(--muted) }
+  .num { text-align:right; font-variant-numeric:tabular-nums }
+  input,button { font:inherit }
+  input { padding:8px 10px; border:1px solid var(--line); border-radius:8px; width:100% }
+  button { padding:8px 14px; border:0; border-radius:8px; background:var(--blue);
+           color:#fff; font-weight:600; cursor:pointer }
+  button.ghost { background:#334155 }
+  .row { display:flex; gap:10px; align-items:end; flex-wrap:wrap }
+  .row > div { flex:1; min-width:200px }
+  label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px }
+  .muted { color:var(--muted) }
+  .err { color:var(--red); margin-top:10px }
+  .op-INSERT { color:var(--green); font-weight:600 }
+  .op-UPDATE { color:var(--amber); font-weight:600 }
+  .op-DELETE { color:var(--red); font-weight:600 }
+  .tag { display:inline-block; background:#f1f5f9; border-radius:6px; padding:1px 7px;
+         margin:2px 4px 2px 0; font-size:12px }
+  .empty { padding:24px; text-align:center; color:var(--muted) }
+</style>
+</head>
+<body>
+<header>
+  <h1>Trial history</h1>
+  <span class="sp"></span>
+  <span id="who" class="muted"></span>
+  <button id="out" class="ghost" style="display:none">Sign out</button>
+</header>
+
+<main>
+  <div class="card" id="login">
+    <p class="muted" style="margin-top:0">Admin sign-in. This page shows who has
+      been round the trial demo and what they changed.</p>
+    <div class="row">
+      <div><label>Email</label><input id="email" type="email" autocomplete="username"></div>
+      <div><label>Password</label><input id="pw" type="password" autocomplete="current-password"></div>
+      <div style="flex:0"><button id="in">Sign in</button></div>
+    </div>
+    <div class="err" id="loginErr"></div>
+  </div>
+
+  <div class="card" id="sessions" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <strong>Sessions</strong><span class="sp" style="flex:1"></span>
+      <button id="refresh" class="ghost">Refresh</button>
+    </div>
+    <div id="sessionsBody"></div>
+  </div>
+
+  <div class="card" id="detail" style="display:none"></div>
+</main>
+
+<script src="/js/supabase.js"></script>
+<script src="/js/config.js"></script>
+<script>
+const sb = window.supabase.createClient(window.__SUPABASE_URL__, window.__SUPABASE_ANON__,
+  { auth: { persistSession: true, autoRefreshToken: true } });
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g,
+  c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const when = s => s ? new Date(s).toLocaleString() : "—";
+
+async function rpc(fn, args = {}) {
+  const { data, error } = await sb.rpc(fn, args);
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function loadSessions() {
+  let rows;
+  try { rows = await rpc("trial_sessions_list", { p_limit: 200 }); }
+  catch (e) {
+    $("sessionsBody").innerHTML =
+      `<div class="empty">${esc(e.message)}<br><span class="muted">This page is admin-only.</span></div>`;
+    return;
+  }
+  if (!rows.length) {
+    $("sessionsBody").innerHTML = `<div class="empty">Nobody has used the trial yet.</div>`;
+    return;
+  }
+  $("sessionsBody").innerHTML = `<table><thead><tr>
+      <th>Account</th><th>Started</th><th>Last seen</th><th>Ended</th>
+      <th class="num">Minutes</th><th class="num">Actions</th><th></th></tr></thead>
+    <tbody>${rows.map(r => `<tr data-id="${r.id}">
+      <td><strong>${esc(r.email)}</strong></td>
+      <td>${esc(when(r.started_at))}</td>
+      <td>${esc(when(r.last_seen_at))}</td>
+      <td>${r.ended_at ? esc(when(r.ended_at)) + ` <span class="muted">(${esc(r.ended_reason||"")})</span>` : "—"}</td>
+      <td class="num">${r.minutes ?? 0}</td>
+      <td class="num">${r.actions}</td>
+      <td>${r.live ? '<span class="pill live">live now</span>'
+                   : '<span class="pill done">finished</span>'}</td>
+    </tr>`).join("")}</tbody></table>
+    <p class="muted" style="margin-bottom:0">Click a session to see everything it changed.</p>`;
+  $("sessionsBody").querySelectorAll("tr[data-id]").forEach(tr =>
+    tr.addEventListener("click", () => showSession(tr.dataset.id)));
+}
+
+async function showSession(id) {
+  const d = await rpc("trial_session_activity", { p_session_id: Number(id), p_limit: 2000 });
+  const s = d.session || {};
+  const items = d.items || [];
+  $("detail").style.display = "";
+  $("detail").innerHTML = `
+    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+      <strong>Session #${esc(s.id)}</strong>
+      <span class="muted">${esc(s.email)} · ${esc(when(s.started_at))}</span>
+    </div>
+    ${s.user_agent ? `<div class="muted" style="font-size:12px;margin-top:4px">${esc(s.user_agent)}</div>` : ""}
+    <div style="margin:10px 0">${(d.by_table || []).map(t =>
+      `<span class="tag">${esc(t.table_name)} · ${t.n}</span>`).join("") ||
+      '<span class="muted">Nothing was changed in this session.</span>'}</div>
+    ${items.length ? `<table><thead><tr><th>Time</th><th>What</th><th>Row</th></tr></thead>
+      <tbody>${items.map(a => `<tr>
+        <td class="muted">${esc(new Date(a.at).toLocaleTimeString())}</td>
+        <td><span class="op-${esc(a.op)}">${esc(a.op)}</span> ${esc(a.summary)}</td>
+        <td class="muted">${esc(a.row_id || "")}</td></tr>`).join("")}</tbody></table>`
+      : `<div class="empty">They looked around but changed nothing.</div>`}`;
+  $("detail").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function showApp(session) {
+  const { data: { user } } = await sb.auth.getUser();
+  $("who").textContent = user ? user.email : "";
+  $("login").style.display = "none";
+  $("sessions").style.display = "";
+  $("out").style.display = "";
+  await loadSessions();
+}
+
+$("in").addEventListener("click", async () => {
+  $("loginErr").textContent = "";
+  const { error } = await sb.auth.signInWithPassword({
+    email: $("email").value.trim().toLowerCase(), password: $("pw").value });
+  if (error) { $("loginErr").textContent = "Invalid email or password"; return; }
+  showApp();
+});
+$("pw").addEventListener("keydown", e => { if (e.key === "Enter") $("in").click(); });
+$("out").addEventListener("click", async () => { await sb.auth.signOut(); location.reload(); });
+$("refresh").addEventListener("click", loadSessions);
+
+sb.auth.getSession().then(({ data }) => { if (data.session) showApp(); });
+</script>
+</body>
+</html>

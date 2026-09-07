@@ -14,7 +14,8 @@ auth, storage and the computed routes; Vercel for the static front end.
 | `engineer@demo.foxcrm.app` | `demo1234` | The phone view — his own round only |
 | `engineer2@demo.foxcrm.app` | `demo1234` | A second engineer, so the roster has two people |
 | `client@demo.foxcrm.app` | `demo1234` | The customer portal, in Arabic — one company |
-| `trial@demo.foxcrm.app` | `trial1234` | **The one to hand a prospect.** Its own `trial` role — see below |
+| `trial@demo.foxcrm.app` | `trial1234` | **The ones to hand prospects.** Its own `trial` role — see below |
+| `trial2@` `trial3@` `trial4@` | `trial1234` | Three more, so several people can test at once |
 
 The passwords are deliberately weak and public. **This project must therefore
 contain nothing real, ever** — no live customer, no live photo, no live
@@ -48,9 +49,9 @@ hole in the demo that the next visitor walks into.
 
 Whatever they *do* change is then restored from a snapshot:
 
-* when they sign **out** — they finished; and
-* when they sign **in** — because the previous visitor almost never signs out,
-  they just close the tab. This is the half that actually matters.
+* when the **last** live trial session signs out; and
+* when a trial user signs **in and nobody else is working** — because the
+  previous visitor almost never signs out, they just close the tab.
 
 The snapshot lives in a `demo_snapshot` schema that is not exposed to
 PostgREST, so a trial user can wreck `public` all they like and never reach the
@@ -66,11 +67,36 @@ front end.
 > that is exactly how the hardening's permission denials got wiped on the first
 > attempt.
 
-> **It is one shared sandbox, not a private copy each.** Two people testing at
-> the same time see each other's edits, and whoever signs in second wipes the
-> first one's work mid-session — including a colleague demoing as `admin`. For
-> a link sent to one prospect at a time that is fine. It is not a multi-tenant
-> trial and should not be sold as one.
+### Several prospects at once
+
+There are four trial logins, and the reset now runs **only when the last live
+trial session ends** — not on every sign-in. So a second prospect arriving no
+longer wipes the first one's work out from under them, which is exactly what
+used to happen. A session with no activity for 20 minutes counts as gone.
+
+> **They still share one dataset.** Two people testing at the same time will
+> see each other's clients and visits. Nothing is lost and nothing persists,
+> but it is a shared room, not a private copy each.
+>
+> True isolation would mean a copy of every row per session, with every table's
+> primary key and foreign keys reworked to carry a session id — a schema change
+> to all 60 tables, not a demo feature. **If a prospect must not see another's
+> work, give them their own Supabase project**, or send the link to one at a
+> time.
+
+### What each prospect did
+
+**https://ipm-crm-demo.vercel.app/trial-history.html** — sign in as `admin`.
+
+Every trial session is listed with when it started, how long it ran, how many
+changes it made and whether it is live now. Click one to see every row that
+session added, changed or deleted, in order, with the time.
+
+It is a separate page on purpose: `app.js` is not ours to edit, and a prospect
+should never see a list of other prospects. The capture is a database trigger
+on all 59 operational tables, so it records what actually happened rather than
+what the front end chose to report — and the log survives the reset, which is
+the whole point of keeping it.
 
 To re-baseline after deliberately changing the seed:
 `node tools/sql.js "select demo_snapshot_take()"`.
@@ -81,7 +107,7 @@ To re-baseline after deliberately changing the seed:
 
 ```
 demo/
-  migrations/    01–35, applied in order. The whole database.
+  migrations/    01–36, applied in order. The whole database.
   web/           what Vercel serves. The live static/ tree with ONE file changed.
   supabase/functions/api/   the catch-all Edge Function for the computed routes.
   tools/         scripts to apply, verify and deploy. No CLI needed for any of it.

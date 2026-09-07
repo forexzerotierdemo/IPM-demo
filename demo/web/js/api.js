@@ -162,13 +162,12 @@ const ROUTES = [
     // never signs out, they just close the tab. The reset restores the
     // profile identically, so reading it first costs nothing.
     const me = await profile();
-    await resetIfTrial(me.role);
+    await trialSessionStart(me.role);
     return { token: data.session.access_token, user: me };
   }],
   ["POST", /^\/auth\/logout$/, async () => {
-    // ...and again on the way out, so the demo is pristine the moment they
-    // finish rather than only when the next person arrives.
-    await resetIfTrial(API.user && API.user.role);
+    // Closing the LAST live trial session is what cleans the sandbox.
+    await trialSessionEnd(API.user && API.user.role);
     await sb.auth.signOut();
     return { ok: true };
   }],
@@ -365,19 +364,25 @@ async function generic(method, path, body, q) {
 
 // ------------------------------------------------------- the sandbox
 // The `trial` role is for handing to a prospect: they may look at and change
-// the whole operational system, and none of it survives the session.
-// demo_reset() puts the dataset back from a snapshot they cannot reach, and
-// refuses every other role — so this is safe to call unconditionally.
+// the whole operational system, and none of it survives them.
 //
-// Keyed on the ROLE, not on an address: a second trial account needs no
-// change here, and there is no email hardcoded into the front end.
+// The reset is NOT fired on every login. It runs when the last live trial
+// session ends — otherwise a second prospect arriving would wipe the first
+// one's work out from under them mid-session, which is exactly what used to
+// happen. trial_session_start/end own that decision server-side; both refuse
+// any role but `trial`, so these are safe to call unconditionally.
 //
-// Failure is deliberately swallowed. A reset that does not run leaves the
-// demo untidy; a reset whose error blocks the login leaves the prospect
-// staring at "Invalid email or password", which is far worse.
-async function resetIfTrial(role) {
+// Failure is deliberately swallowed. A session that fails to open leaves the
+// demo untidy; an error that blocks the login leaves the prospect staring at
+// "Invalid email or password", which is far worse.
+async function trialSessionStart(role) {
   if (role !== "trial") return;
-  try { await sb.rpc("demo_reset"); } catch (e) { /* untidy, not broken */ }
+  try { await sb.rpc("trial_session_start", { p_user_agent: navigator.userAgent }); }
+  catch (e) { /* untidy, not broken */ }
+}
+async function trialSessionEnd(role) {
+  if (role !== "trial") return;
+  try { await sb.rpc("trial_session_end"); } catch (e) { /* untidy, not broken */ }
 }
 
 // The public.users row for the signed-in account, shaped like the old
