@@ -232,6 +232,31 @@ const ROUTES = [
   // Must sit above the generic /reports table, or "drafts" is read as an id.
   ["GET", /^\/reports\/drafts$/, () => sb.rpc("reports_drafts").then(unwrap)],
 
+  // ---- the QR scan chain ------------------------------------------------
+  // A trap's printed label encodes <host>/scan/<CODE>. The engineer lands
+  // here, sees what was found at it before and what the last visit promised,
+  // and files this visit's reading — which is what the follow-up report
+  // prints. The 32-hex form is the legacy floor-plan marker token.
+  ["GET", /^\/scan\/([A-Za-z]{3}\d{4,})$/, (m) =>
+      sb.rpc("scan_lookup", { p_code: m[1] }).then(unwrap)],
+  ["POST", /^\/scan\/([A-Za-z]{3}\d{4,})$/, (m, b) => sb.rpc("scan_record", {
+      p_code: m[1],
+      p_status: b.status || "ok",
+      p_findings: b.findings || null,
+      p_note: b.note || null,
+      p_visit_id: b.visit_id ? Number(b.visit_id) : null,
+      p_lat: b.lat ?? null, p_lng: b.lng ?? null,
+      p_details: b.details || null,
+    }).then(unwrap)],
+
+  ["GET", /^\/devices\/(\d+)\/history$/, (m) =>
+      sb.rpc("device_history", { p_id: Number(m[1]) }).then(unwrap)],
+  ["GET", /^\/visits\/(\d+)\/devices$/, (m) =>
+      sb.rpc("visit_devices", { p_visit_id: Number(m[1]) }).then(unwrap)],
+  // The follow-up sheet. Must sit above the generic /visits table.
+  ["GET", /^\/visits\/(\d+)\/followup$/, (m) =>
+      sb.rpc("visit_followup", { p_visit_id: Number(m[1]) }).then(unwrap)],
+
   // ---- the QR device registry ------------------------------------------
   ["POST", /^\/devices\/generate$/, (m, b) => sb.rpc("devices_generate", {
       p_type: b.type, p_count: Number(b.count),

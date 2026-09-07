@@ -39,6 +39,13 @@ const SHIM = [
   [/^\/clients\/\(\\d\+\)\/analytics$/, 'RPC client_analytics'],
   [/^\/clients\/\(\\d\+\)\/statement$/, 'RPC client_statement'],
   [/^\/clients\/\(\\d\+\)\/pest-trends$/, 'RPC client_pest_trends'],
+  // The QR chain. The 3-letter+digits form is the printed trap label; the
+  // 32-hex form is the legacy floor-plan marker token, which this demo does
+  // not use (no site maps are seeded) and which stays unported.
+  [/^\/scan\/\(\[A-Za-z\]\{3\}\\d\{4,\}\)$/, 'RPC scan_lookup / scan_record'],
+  [/^\/devices\/\(\\d\+\)\/history$/, 'RPC device_history'],
+  [/^\/visits\/\(\\d\+\)\/devices$/, 'RPC visit_devices'],
+  [/^\/visits\/\(\\d\+\)\/followup$/, 'RPC visit_followup'],
 ];
 
 // The shim's GENERIC resource table answers /<resource> and /<resource>/<id>
@@ -101,7 +108,22 @@ const genericHandles = (p) => {
   show('NOT PROBED — writes or id-in-path', skipped,
        r => `${r.method.padEnd(6)} ${r.path.padEnd(34)} ${r.handler}`);
 
+  // ---- the blind spot -------------------------------------------------
+  // Everything above walks the 83 routes Appendix C called "Edge Function".
+  // A route it called "PostgREST" is assumed served — but it is only served
+  // if the shim's generic table actually recognises the path. /scan/<CODE>
+  // was marked PostgREST, matched nothing, fell through to the Edge Function
+  // and 501'd, and this tool reported full coverage throughout. So: list the
+  // PostgREST-marked routes that neither the routing table nor the generic
+  // table handles. They are unported, whatever the appendix says.
+  const gap = routes.filter(r => r.target === 'PostgREST')
+    .filter(r => !SHIM.some(([re]) => re.test(r.path)))
+    .filter(r => !genericHandles(r.path));
+  show('MARKED PostgREST BUT UNHANDLED — falls through to a 501', gap,
+       r => `${r.method.padEnd(6)} ${r.path.padEnd(34)} ${r.handler}`);
+
   console.log(`\n${live.length} of ${edge.length} computed routes live, ` +
               `${dead.filter(r => !r.exists).length} still 501, ` +
               `${skipped.length} not probed.`);
+  console.log(`${gap.length} route(s) marked PostgREST that nothing answers.`);
 })().catch(e => { console.error(e.message); process.exit(1); });

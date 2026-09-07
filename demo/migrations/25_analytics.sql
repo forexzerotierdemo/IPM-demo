@@ -349,9 +349,10 @@ BEGIN
            WHERE f.hit
            GROUP BY k) f), '[]'::jsonb),
 
-    -- The catch, by species, comes off a follow-up sheet this demo does not
-    -- fill in; an empty list hides the panel rather than inventing a count.
-    'pests', '[]'::jsonb,
+    -- What was actually caught, off the tick-list the engineer fills in at
+    -- the trap. app.js splits it into the flying list (light traps) and the
+    -- crawling list (glue stations) by the keys themselves.
+    'pests', fleet_pests(d_from, d_to, p_client_id, sid),
     'actions', jsonb_build_object('done', 0, 'deferred', 0),
     'deferred_list', '[]'::jsonb,
 

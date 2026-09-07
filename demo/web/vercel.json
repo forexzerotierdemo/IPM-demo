@@ -1,4 +1,8 @@
 {
+  "comment": "A printed trap label encodes <host>/scan/<CODE>, so that path has to serve the app rather than a 404 — app.js reads the code back off location.pathname on boot. Everything else is a real file.",
+  "rewrites": [
+    { "source": "/scan/:code", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

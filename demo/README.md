@@ -81,7 +81,7 @@ To re-baseline after deliberately changing the seed:
 
 ```
 demo/
-  migrations/    01–32, applied in order. The whole database.
+  migrations/    01–35, applied in order. The whole database.
   web/           what Vercel serves. The live static/ tree with ONE file changed.
   supabase/functions/api/   the catch-all Edge Function for the computed routes.
   tools/         scripts to apply, verify and deploy. No CLI needed for any of it.
@@ -113,6 +113,44 @@ Everything else in `web/` that is new: `js/supabase.js` (vendored client),
 for demo-only things, added by extending the table i18n.js defines rather than
 editing it), three `<script>` tags in `index.html`, and a bumped cache name in
 `sw.js`.
+
+## The QR scan chain
+
+A trap carries a printed label — `LIT0001`, `GLU0062` — encoding
+`<host>/scan/<CODE>`. The whole loop works:
+
+1. **Print** the label from the trap's page (`qrcode.js` renders it as SVG,
+   crisp at any size).
+2. **Scan it** with a phone camera. `/scan/<CODE>` is rewritten to the app in
+   `vercel.json`; without that rewrite a scanned label lands on a 404, which is
+   exactly what it did before this was wired up.
+3. **The engineer sees** whose trap it is, which in-progress visit the reading
+   will file against, the recent history, and — the useful part — **what the
+   last visit promised to do here** and never did.
+4. **They file the reading**: a status, the per-type follow-up fields (lamp,
+   sheet, bait consumption, catch tick-list…), optionally geo-stamped.
+5. **It appears in the report.** `/visits/:id/followup` is the printable
+   proof-of-visit: every trap read on that visit, grouped by type, with the
+   fields as filled in. `/visits/:id/devices` is the engineer's checklist —
+   scanned versus still to do.
+
+Two details worth knowing, both faithful to `server.py`:
+
+- **The scan functions are SECURITY DEFINER**, and that is deliberate. An
+  agent holds `maps.view`/`maps.edit` but **not** `devices.view` — the
+  engineer reads traps in the field without getting the device registry admin
+  screen. Reading `devices` through RLS therefore told the one person the
+  feature exists for that the code was unknown. The functions reach the
+  registry directly and re-implement the original's own checks
+  (`_assert_client_access`, the branch pin, the permission).
+- **A reading is whitelisted per device type.** `clean_device_details()`
+  mirrors `DEVICE_FIELD_KEYS`: a bait-station field sent for a light trap is
+  dropped, numbers are coerced, and the catch tick-list is stored comma-joined
+  the way the reports and analytics read it. A hand-made request cannot stuff
+  arbitrary keys into the record.
+
+`node tools/test-scan.js` walks the whole chain as the engineer, the customer
+portal and a stranger — 22 checks.
 
 ## Security model
 
@@ -225,6 +263,7 @@ cp .env.example .env       # then fill it in
    node tools/verify-rls.js
    node tools/smoke.js
    node tools/test-dispatch.js         # the board, shape by shape
+   node tools/test-scan.js             # the QR chain, scan to report
    ```
 
 ## Corrections to the build guide
@@ -279,7 +318,9 @@ computed** routes, these are ported —
   day/week/month selector once that call succeeds
 - `/dispatch/optimize` in the Edge Function: nearest-neighbour routing is the
   one part of the board that genuinely needs a procedural language
-- `/visits/:id/followup` and `/engineers/scorecard`, in the Edge Function
+- **the whole QR scan chain** — `/scan/<CODE>` both ways, `/devices/:id/history`,
+  `/visits/:id/devices` and `/visits/:id/followup` (the printable proof-of-visit)
+- `/engineers/scorecard`, in the Edge Function
 
 — and the rest are not: `finance/*`, capacity, service-gaps, cost-to-serve,
 pipeline, search, backup/restore, branch-schedule, the CSV/XLSX exports, and

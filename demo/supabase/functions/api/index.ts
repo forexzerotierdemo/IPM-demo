@@ -162,16 +162,10 @@ route("POST", /^\/dispatch\/optimize$/, async ({ db, body }) => {
   };
 });
 
-// A branch's own diary — the follow-up sheet reads it.
-route("GET", /^\/visits\/(\d+)\/followup$/, async ({ db, m }) => {
-  const visit = await rows(db, "v_visits", (s: any) => s.eq("id", m[1]));
-  const v = (visit as any[])[0];
-  if (!v) throw new Error("Visit not found");
-  const history = await rows(db, "v_visits", (s: any) =>
-    s.eq("site_id", v.site_id).eq("status", "completed")
-     .order("scheduled_start", { ascending: false }).limit(6));
-  return { visit: v, history };
-});
+// NOTE: /visits/:id/followup used to be answered here with a guessed shape
+// ({visit, history}). The real handler returns {visit, groups} — the traps
+// read on THAT visit, grouped by type — and it is now a SQL function
+// (migrations/33_qr_scan.sql) called straight from the shim.
 
 // The engineer scorecard: completed work and paperwork owed, per engineer.
 route("GET", /^\/engineers\/scorecard$/, async ({ db }) => {
