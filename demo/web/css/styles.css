@@ -1,0 +1,1823 @@
+:root {
+  /* brand + palette — primary accent is FoxSystems blue (var names kept) */
+  --green: #1f74d6; --green-d: #14589f; --green-l: #dbeafe;
+  /* success/positive semantic colors stay green (completed, paid, low severity) */
+  --ok: #16a34a; --ok-d: #15803d; --ok-l: #dcfce7;
+  --teal: #0d9488; --emerald: #059669;
+  --ink: #0f1f2e; --muted: #64748b; --line: #e6ecf2; --bg: #eef2f7;
+  --amber: #d97706; --amber-l: #fef3c7; --red: #dc2626; --red-l: #fee2e2;
+  --blue: #2563eb; --blue-l: #dbeafe; --purple: #7c3aed; --purple-l: #ede9fe;
+  --cyan: #0891b2;
+  --radius: 16px; --radius-sm: 10px;
+  --shadow: 0 1px 2px rgba(16,31,46,.04), 0 8px 24px rgba(16,31,46,.06);
+  --shadow-lg: 0 12px 40px rgba(16,31,46,.14);
+  --side-grad: linear-gradient(180deg, #0f3d2e 0%, #0c2f24 60%, #0a2820 100%);
+  --brand-grad: linear-gradient(135deg, #1f74d6, #0ea5b7);
+}
+* { box-sizing: border-box; }
+html[lang="ar"] body { font-family: "Cairo", system-ui, sans-serif; }
+body {
+  margin: 0; font-family: "Inter", system-ui, -apple-system, sans-serif; color: var(--ink);
+  background: var(--bg); font-size: 14px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  /* Overscrolling at the top must not reload the page — a half-typed form is
+     not worth a stray swipe. Refreshing is the topbar's ↻ button instead. */
+  overscroll-behavior-y: contain;
+}
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+a { color: var(--green-d); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------- Login ---------- */
+.login-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(1200px 600px at 10% 0%, #1f9d57 0%, transparent 50%),
+              radial-gradient(1000px 700px at 100% 100%, #0d9488 0%, transparent 55%),
+              linear-gradient(135deg, #0f3d2e, #0a2820);
+  position: relative; overflow: hidden;
+}
+.login-screen::before, .login-screen::after {
+  content: ""; position: absolute; border-radius: 50%; filter: blur(8px); opacity: .25;
+}
+.login-screen::before { width: 320px; height: 320px; background: #5eead4; top: -80px; inset-inline-start: -60px; }
+.login-screen::after { width: 260px; height: 260px; background: #86efac; bottom: -60px; inset-inline-end: -40px; }
+.login-card {
+  background: rgba(255,255,255,.97); padding: 40px; border-radius: 22px; width: 380px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.35); text-align: center; position: relative; z-index: 1;
+  border: 1px solid rgba(255,255,255,.6);
+}
+.brand .logo {
+  font-size: 30px; width: 68px; height: 68px; margin: 0 auto 6px; display: flex;
+  align-items: center; justify-content: center; border-radius: 20px;
+  background: var(--brand-grad); box-shadow: 0 10px 24px rgba(22,163,74,.4);
+}
+.login-card h1 { margin: 10px 0 2px; font-size: 23px; font-weight: 800; letter-spacing: -.02em; }
+.login-card form { text-align: start; margin-top: 20px; }
+.login-card label { display: block; font-weight: 600; margin: 14px 0 5px; font-size: 13px; }
+.login-card input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 11px; font-size: 14px; transition: border-color .15s, box-shadow .15s; }
+.login-card input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 4px var(--green-l); }
+.login-hint { margin-top: 18px; font-size: 11px; line-height: 1.7; color: var(--muted); }
+.error { color: var(--red); margin: 10px 0; font-size: 13px; background: var(--red-l); padding: 8px 12px; border-radius: 9px; }
+
+/* ---------- Buttons ---------- */
+.btn-primary, .btn {
+  background: var(--brand-grad); color: #fff; border: none; padding: 10px 18px;
+  border-radius: 11px; font-weight: 600; cursor: pointer; font-size: 14px; font-family: inherit;
+  box-shadow: 0 4px 12px rgba(31,116,214,.25); transition: transform .12s, box-shadow .15s, filter .15s;
+}
+.btn-primary { width: 100%; margin-top: 22px; padding: 13px; }
+.btn:hover, .btn-primary:hover { filter: brightness(1.05); box-shadow: 0 6px 18px rgba(31,116,214,.34); transform: translateY(-1px); }
+.btn:active, .btn-primary:active { transform: translateY(0); }
+.btn.secondary { background: #fff; color: var(--ink); border: 1.5px solid var(--line); box-shadow: var(--shadow); }
+.btn.secondary:hover { background: #f8fafc; filter: none; border-color: #cdd8e3; }
+.btn.danger { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 12px rgba(220,38,38,.25); }
+.btn.sm { padding: 7px 13px; font-size: 12.5px; border-radius: 9px; }
+.link-btn { background: none; border: none; color: var(--green-d); cursor: pointer; font: inherit; padding: 6px 0; font-weight: 600; }
+.link-btn:hover { text-decoration: underline; }
+.link-btn.danger { color: var(--red); }
+a.link-btn { text-decoration: none; }   /* an <a> styled as a row action (open a file) */
+.icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--muted); transition: color .15s; }
+/* Back / refresh sit next to the menu button in the topbar. The arrow flips
+   with the writing direction so it always points "back". */
+#nav-back, #nav-refresh { font-size: 20px; line-height: 1; padding: 2px 4px; }
+html[dir="rtl"] #nav-back { transform: scaleX(-1); }
+#nav-refresh.spin { animation: navspin .6s linear; }
+@keyframes navspin { to { transform: rotate(360deg); } }
+.icon-btn:hover { color: var(--ink); }
+
+/* ---------- App layout ---------- */
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 250px; background: var(--side-grad); color: #b8d8c8; display: flex; flex-direction: column;
+  padding: 20px 0; position: sticky; top: 0; height: 100vh;
+  transition: width .2s ease; overflow: hidden;
+}
+.nav-toggle { font-size: 22px; line-height: 1; padding: 0 4px; }
+/* Collapsed sidebar: hidden outright. The tabs are text-only now, so there is
+   no icon rail left to shrink to — the toggle just shows/hides the nav. */
+.app.nav-collapsed .sidebar { width: 0; padding: 0; }
+/* With the sidebar collapsed, let the page content fill the whole screen. */
+.app.nav-collapsed .view { max-width: none; }
+.brand-sm { display: flex; align-items: center; gap: 11px; font-weight: 800; font-size: 16px; padding: 0 22px 18px; color: #fff; letter-spacing: -.01em; }
+.brand-sm .logo { font-size: 20px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(255,255,255,.12); }
+#nav { flex: 1; display: flex; flex-direction: column; gap: 3px; padding: 10px; overflow-y: auto; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 11px 15px; border-radius: 12px;
+  color: #b8d8c8; cursor: pointer; font-weight: 600; font-size: 13.5px; transition: background .15s, color .15s; position: relative;
+}
+.nav-item:hover { background: rgba(255,255,255,.08); color: #fff; text-decoration: none; }
+.nav-item.active { background: var(--brand-grad); color: #fff; box-shadow: 0 6px 16px rgba(13,148,136,.4); }
+.sidebar-foot { padding: 16px 22px 0; border-top: 1px solid rgba(255,255,255,.1); display: flex; flex-direction: column; gap: 7px; }
+.sidebar-foot .link-btn { color: #8fd3b0; text-align: start; }
+.sidebar-foot .link-btn:hover { color: #fff; }
+.user-box { margin: 6px 0; }
+.user-name { font-weight: 700; color: #fff; }
+
+.content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.topbar {
+  background: rgba(255,255,255,.85); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+  padding: 14px 26px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  position: sticky; top: 0; z-index: 20;
+}
+.quick-search { flex: 1; max-width: 460px; position: relative; }
+.quick-search input { width: 100%; padding: 10px 16px 10px 38px; border: 1.5px solid var(--line); border-radius: 24px; font-size: 13.5px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2364748b' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") no-repeat 13px center; }
+html[dir="rtl"] .quick-search input { padding: 10px 38px 10px 16px; background-position: calc(100% - 13px) center; }
+.quick-search input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 4px var(--green-l); }
+.view { padding: 26px; max-width: 1400px; width: 100%; }
+
+/* ---------- Common UI ---------- */
+.page-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; gap: 12px; flex-wrap: wrap; }
+.page-head h2 { margin: 0; font-size: 23px; font-weight: 800; letter-spacing: -.02em; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: #fff; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 14px; border: 1px solid #eef2f6;
+  transition: transform .15s, box-shadow .15s; position: relative; overflow: hidden;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.stat-card .sc-ic {
+  width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center;
+  justify-content: center; font-size: 22px; flex-shrink: 0;
+  background: var(--green-l); color: var(--green-d);
+}
+.stat-card .v { font-size: 25px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.stat-card .l { color: var(--muted); font-size: 12.5px; margin-top: 3px; font-weight: 500; }
+/* accent variants */
+.stat-card.c-green .sc-ic { background: var(--ok-l); color: var(--ok-d); }
+.stat-card.c-blue .sc-ic { background: var(--blue-l); color: var(--blue); }
+.stat-card.c-amber .sc-ic { background: var(--amber-l); color: var(--amber); }
+.stat-card.c-red .sc-ic { background: var(--red-l); color: var(--red); }
+.stat-card.c-purple .sc-ic { background: var(--purple-l); color: var(--purple); }
+.stat-card.c-teal .sc-ic { background: #cffafe; color: var(--cyan); }
+.stat-card.warn .v { color: var(--amber); }
+.stat-card.danger .v { color: var(--red); }
+.stat-card.danger .sc-ic { background: var(--red-l); color: var(--red); }
+.stat-card.warn .sc-ic { background: var(--amber-l); color: var(--amber); }
+
+.panel { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 18px; border: 1px solid #eef2f6; }
+.panel h3 { margin: 0 0 14px; font-size: 15px; font-weight: 700; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 860px){ .grid-2{ grid-template-columns: 1fr; } .sidebar{ width: 200px; } }
+
+table { width: 100%; border-collapse: collapse; }
+/* Wide tables (many columns / nowrap cells) scroll horizontally inside their
+   own box instead of pushing the whole page sideways on a phone. Tables are
+   wrapped in .table-scroll at runtime (see app.js); the table itself keeps its
+   normal full-width table layout, so narrow tables don't shrink/leave blank space. */
+.table-scroll { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+th, td { text-align: start; padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+th { color: var(--muted); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; background: #f8fafc; }
+thead tr th:first-child { border-start-start-radius: 10px; }
+thead tr th:last-child { border-start-end-radius: 10px; }
+tbody tr { transition: background .12s; }
+tbody tr:hover { background: #f6fbf8; }
+tr.clickable { cursor: pointer; }
+tr.clickable:hover { background: var(--green-l); }
+
+.badge { display: inline-block; padding: 4px 11px; border-radius: 20px; font-size: 11.5px; font-weight: 700; }
+.b-scheduled, .b-sent, .b-draft { background: var(--blue-l); color: var(--blue); }
+.b-in_progress { background: var(--amber-l); color: var(--amber); }
+.b-completed, .b-paid, .b-active, .b-accepted { background: var(--ok-l); color: var(--ok-d); }
+.b-cancelled, .b-overdue, .b-inactive, .b-declined, .b-lost { background: var(--red-l); color: var(--red); }
+.b-new { background: var(--blue-l); color: var(--blue); }
+.b-contacted, .b-quoted { background: var(--amber-l); color: var(--amber); }
+.b-won { background: var(--ok-l); color: var(--ok-d); }
+.sev-low { color: var(--ok-d); } .sev-medium { color: var(--amber); }
+.sev-high, .sev-critical { color: var(--red); font-weight: 700; }
+.lowstock { color: var(--red); font-weight: 700; }
+
+/* forms */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+.form-grid .full { grid-column: 1 / -1; }
+.field label { display: block; font-weight: 600; font-size: 12.5px; margin-bottom: 5px; color: #334155; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; font-size: 13.5px; font-family: inherit; transition: border-color .15s, box-shadow .15s; background: #fff;
+}
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px var(--green-l); }
+.field textarea { min-height: 66px; resize: vertical; }
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* photos */
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 12px; }
+.photo-item { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; position: relative; box-shadow: var(--shadow); }
+.photo-item img { width: 100%; height: 124px; object-fit: cover; display: block; }
+.photo-item .cap { padding: 7px 9px; font-size: 12px; color: var(--muted); }
+.photo-item .rm { position: absolute; top: 7px; inset-inline-end: 7px; background: rgba(0,0,0,.6); color: #fff; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; }
+/* ✎ REWORDS THE COMMENT. It used to be a pencil glyph inside the caption line,
+   which measured ten pixels across — a mouse can hit that, a thumb cannot, and
+   that is why rewording only ever worked on the desktop. It is now a corner
+   button of the same size as ✕, and the caption line itself opens the same
+   dialog. Both grow on a phone, where they are pressed with a finger. */
+.photo-item .ed { position: absolute; top: 7px; inset-inline-end: 39px; background: rgba(0,0,0,.6); color: #fff; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
+.photo-item .cap[data-edcap] { cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.photo-item .cap .cap-pen { margin-inline-start: auto; flex: 0 0 auto; color: var(--green-d, #0f766e);
+  font-size: 15px; font-weight: 700; }
+/* non-image attachments (PDF / Excel / other) render as a download card */
+.photo-item.file-item .file-link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; height: 124px; padding: 10px; text-align: center; text-decoration: none; color: var(--ink, #1f2937); background: var(--green-l, #f1f5f9); }
+.photo-item.file-item .file-icon { font-size: 38px; line-height: 1; }
+.photo-item.file-item .file-name { font-size: 12px; font-weight: 600; word-break: break-word; max-height: 32px; overflow: hidden; }
+
+.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.toolbar input, .toolbar select { padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 10px; font-family: inherit; background: #fff; }
+
+/* modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(15,31,46,.5); backdrop-filter: blur(3px); display: flex; align-items: flex-start; justify-content: center; padding: 44px 16px; z-index: 50; overflow:auto; }
+.modal { background: #fff; border-radius: 18px; width: 100%; max-width: 640px; box-shadow: var(--shadow-lg); animation: pop .18s ease; }
+/* Google Places autocomplete dropdown must float above the modal overlay (z-index 50). */
+.pac-container { z-index: 10000; }
+/* Per-site breakdown rows under a contract in the contracts list. */
+.ct-sites-detail td { background: var(--bg, #f7f9fb); padding: 0 14px 10px; }
+.ct-sites-detail table { width: 100%; margin: 0; }
+.ct-sites-detail th, .ct-sites-detail td { font-size: 12.5px; padding: 5px 8px; }
+@keyframes pop { from { transform: scale(.96) translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-head { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+.modal-head h3 { margin: 0; font-size: 17px; font-weight: 700; }
+.modal-body { padding: 22px; }
+
+.toast { position: fixed; bottom: 26px; inset-inline-end: 26px; background: var(--ink); color: #fff; padding: 13px 20px; border-radius: 12px; z-index: 100; box-shadow: var(--shadow-lg); font-weight: 600; animation: pop .2s ease; }
+.empty { text-align: center; color: var(--muted); padding: 32px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 9px 18px; }
+.kv div:nth-child(odd){ color: var(--muted); font-weight: 500; }
+/* Picked wording (condition / recommendations) reads as a numbered list. */
+.wording-list { margin: 0; padding-inline-start: 20px; }
+.wording-list li { line-height: 1.7; padding-inline-start: 2px; }
+.section-title { display:flex; justify-content: space-between; align-items:center; margin: 22px 0 12px; }
+.section-title h3 { margin:0; font-size: 15px; font-weight: 700; }
+.breadcrumb { color: var(--muted); margin-bottom: 10px; cursor: pointer; font-weight: 600; display: inline-block; }
+.breadcrumb:hover { color: var(--green-d); }
+
+/* notifications bell */
+.bell-wrap { position: relative; }
+.bell-badge { position: absolute; top: -4px; inset-inline-end: -4px; background: var(--red); color: #fff; border-radius: 10px; font-size: 10px; min-width: 17px; height: 17px; line-height: 17px; text-align: center; padding: 0 3px; font-weight: 700; box-shadow: 0 0 0 2px #fff; }
+.bell-menu { position: absolute; inset-inline-end: 0; top: 38px; width: 330px; max-height: 440px; overflow: auto; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-lg); z-index: 40; }
+.bell-head { display: flex; justify-content: space-between; align-items: center; padding: 13px 15px; border-bottom: 1px solid var(--line); }
+.notif { padding: 12px 15px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.notif:hover { background: #f8fafc; }
+.notif.unread { background: var(--green-l); }
+.notif .nt { font-weight: 700; font-size: 13px; }
+
+/* calendar */
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; }
+.cal-grid.head { margin-bottom: 7px; }
+.cal-dow { text-align: center; font-weight: 700; color: var(--muted); font-size: 12px; padding: 4px; }
+.cal-cell { background: #fff; border: 1px solid var(--line); border-radius: 12px; min-height: 98px; padding: 7px; box-shadow: var(--shadow); }
+.cal-cell.empty-cell { background: transparent; border: none; box-shadow: none; }
+.cal-cell.today { border-color: var(--green); box-shadow: 0 0 0 2px var(--green-l) inset; }
+.cal-day { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 5px; }
+.cal-ev { font-size: 11px; padding: 3px 7px; border-radius: 6px; margin-bottom: 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.cal-ev-site { display: block; font-weight: 500; opacity: 0.85; font-size: 10px; overflow: hidden; text-overflow: ellipsis; }
+
+/* Editable report document (Reports sidebar only) */
+.rdoc { max-width: 820px; margin: 0 auto; background: #fff; border: 1px solid #e6ecf2; border-radius: 14px; padding: 26px 30px; box-shadow: 0 4px 18px rgba(15,23,42,.05); }
+.rdoc-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 12px; }
+.rdoc-title { font-size: 20px; font-weight: 800; letter-spacing: .02em; }
+.rdoc-no { color: #64748b; font-size: 12px; margin-top: 3px; }
+.rdoc-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; margin: 16px 0 8px; }
+.rdoc-meta > div { font-size: 13px; }
+.rdoc-meta span { color: #64748b; display: block; font-size: 11px; }
+/* start / end / duration sit together on one line of their own */
+.rdoc-meta .times { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.rdoc-sec { margin: 22px 0 8px; font-size: 11px; color: #0f172a; text-transform: uppercase; letter-spacing: .08em; border-bottom: 1px solid #e3e8ec; padding-bottom: 4px; }
+.rdoc-body { margin-top: 12px; }
+.rdoc-row { margin-bottom: 12px; }
+.rdoc-row label { display: block; font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.rdoc-row input, .rdoc-row textarea, .rdoc-row select { width: 100%; padding: 8px 10px; border: 1px solid #dfe6ee; border-radius: 8px; font: inherit; background: #fbfdff; }
+.rdoc-row textarea { resize: vertical; }
+.rdoc-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+.rdoc-table th, .rdoc-table td { padding: 8px 10px; border-bottom: 1px solid #eef2f5; text-align: start; }
+.rdoc-table th { background: #f1f5f9; font-size: 11px; text-transform: uppercase; color: #475569; }
+/* Device follow-up (QR scan) + photos sections on the report document. */
+.rdoc-extra { margin-top: 6px; }
+.rdoc-fu { margin: 6px 0 14px; overflow-x: auto; }
+.rdoc-fu h4 { margin: 10px 0 2px; font-size: 13px; color: #0f766e; }
+.rdoc-fu .rdoc-table th, .rdoc-fu .rdoc-table td { white-space: nowrap; }
+.rdoc-sigs { display: flex; gap: 30px; margin-top: 26px; }
+.rdoc-sig { flex: 1; text-align: center; }
+/* a photographed paper signature needs more room than a finger scribble,
+   and max-width:100% keeps it inside its column on any paper size */
+.rdoc-sig img { max-height: 110px; max-width: 100%; }
+.rdoc-sig .ln { border-top: 1px solid #1c2733; margin-top: 6px; padding-top: 6px; color: #64748b; font-size: 12px; }
+
+/* analytics bars */
+.bar-row { display: grid; grid-template-columns: 140px 1fr auto; gap: 12px; align-items: center; margin-bottom: 10px; }
+.bar-label { font-size: 12.5px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.bar-track { background: #eef2f6; border-radius: 8px; height: 18px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 8px; min-width: 3px; transition: width .4s ease; background: var(--brand-grad); }
+.bar-val { font-size: 12.5px; font-weight: 700; min-width: 64px; text-align: end; }
+
+/* line items editor */
+.li-table input { width: 100%; padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 8px; }
+.li-table td, .li-table th { padding: 6px 7px; }
+
+/* ---------- site maps + markers ---------- */
+.map-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.map-thumb { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; cursor: pointer; background: #fff; box-shadow: var(--shadow); transition: transform .15s, box-shadow .15s; }
+.map-thumb:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.map-thumb img { width: 100%; height: 124px; object-fit: cover; display: block; background: #f1f5f9; }
+.map-thumb .mt-meta { padding: 9px 11px; display: flex; flex-direction: column; gap: 2px; }
+.map-thumb .rm { position: absolute; top: 7px; inset-inline-end: 7px; background: rgba(0,0,0,.55); color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; }
+.toolbar-select { padding: 8px 11px; border: 1.5px solid var(--line); border-radius: 10px; font-family: inherit; background: #fff; }
+
+.map-legend-bar { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; padding: 11px 15px; background: #fff; border-radius: 12px; box-shadow: var(--shadow); }
+.map-legend-bar .lg { font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+.map-legend-bar .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+
+.map-stage { position: relative; display: inline-block; max-width: 100%; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); background: #f1f5f9; }
+.map-stage img { display: block; max-width: 100%; height: auto; }
+.map-stage.placing { cursor: crosshair; }
+.map-stage.placing .map-pin { pointer-events: none; opacity: .65; }
+.map-pin {
+  position: absolute; transform: translate(-50%, -50%); background: #fff; border: 2px solid var(--mc);
+  border-radius: 18px; padding: 2px 8px 2px 4px; display: flex; align-items: center; gap: 4px;
+  cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,.35); font-size: 12px; white-space: nowrap;
+  transition: transform .12s;
+}
+.map-pin:hover { transform: translate(-50%, -50%) scale(1.12); z-index: 5; }
+.map-pin .pin-ic { font-size: 15px; line-height: 1; }
+.map-pin .pin-lbl { font-weight: 800; color: var(--mc); }
+
+/* ---------- charts ---------- */
+.chart-legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 6px; }
+.chart-legend .lg, .pie-legend .lg { font-size: 12.5px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.sw { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+
+/* 3D tilted pie */
+.pie3d-row { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.pie3d-stage { perspective: 700px; padding: 26px 10px 34px; flex-shrink: 0; }
+.pie3d {
+  width: 180px; height: 180px; border-radius: 50%; transform: rotateX(58deg);
+  position: relative;
+  box-shadow: 0 22px 26px -6px rgba(0,0,0,.45), 0 14px 0 0 rgba(0,0,0,.16);
+}
+.pie3d::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 22px rgba(255,255,255,.4), inset 0 0 0 1px rgba(255,255,255,.25); }
+.pie-legend { display: flex; flex-direction: column; gap: 8px; }
+.pie-legend .lg { color: var(--ink); }
+
+/* 3D cylinder columns */
+.cols3d { display: flex; align-items: flex-end; justify-content: space-around; gap: 16px; padding: 8px 4px 0; overflow-x: auto; }
+.col3d-col { display: flex; flex-direction: column; align-items: center; min-width: 56px; }
+.col3d-bars { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.col3d {
+  width: 46px; background: linear-gradient(90deg, var(--cl), var(--c));
+  border-radius: 7px 7px 5px 5px; position: relative; min-height: 4px; transition: height .5s ease;
+  box-shadow: inset -8px 0 13px rgba(0,0,0,.22), 7px 6px 14px -4px rgba(0,0,0,.3);
+}
+.col3d-cap { position: absolute; top: -8px; inset-inline-start: 0; inset-inline-end: 0; height: 16px; border-radius: 50%; filter: brightness(1.15); }
+.col3d-val { font-weight: 800; margin-bottom: 7px; font-size: 12px; color: var(--ink); }
+.col3d-lbl { margin-top: 10px; font-size: 11px; color: var(--muted); text-align: center; max-width: 80px; font-weight: 600; }
+
+/* FoxSystems branding (app chrome) */
+.brand-logo { width: 240px; max-width: 90%; height: auto; margin: 2px auto 14px; display: block; }
+.brand-sm { flex-direction: column; align-items: flex-start; gap: 9px; }
+.brand-logo-sm { width: 152px; max-width: 100%; height: auto; display: block; }
+.powered { margin-top: 16px; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .02em; text-align: center; }
+.powered-sm { margin-top: 8px; font-size: 10.5px; color: rgba(255,255,255,.5); letter-spacing: .02em; }
+@media (max-width: 860px) { .brand-logo-sm { width: 44px; } .powered-sm { display: none; } }
+
+/* Dark navy login card — matches the FoxSystems logo so it blends in. */
+.login-card {
+  background: linear-gradient(160deg, #0e2c42 0%, #0b2236 100%);
+  border: 1px solid rgba(255,255,255,.10); color: #e7eef5;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5);
+}
+.login-card h1 { color: #f3f7fb; }
+.login-card label { color: #c4d2df; }
+.login-card .muted, .login-hint, .powered { color: #93a6b9; }
+.login-card input {
+  background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.14); color: #eaf1f7;
+}
+.login-card input::placeholder { color: #7f93a6; }
+.login-card input:focus { border-color: #2dd4bf; box-shadow: 0 0 0 4px rgba(45,212,191,.18); }
+.login-card .link-btn { color: #5eead4; }
+.login-card .link-btn:hover { color: #99f6e4; }
+/* Navy sidebar to match the FoxSystems theme (was green). */
+.sidebar { background: linear-gradient(180deg, #0e2c42 0%, #0a2236 55%, #07182a 100%); color: #aac1d4; }
+.nav-item.active { background: linear-gradient(135deg, #1e6fd6, #0ea5b7); box-shadow: 0 6px 16px rgba(14,116,144,.45); }
+.sidebar-foot .link-btn { color: #7fc6dd; }
+.sidebar-foot .link-btn:hover { color: #fff; }
+.sidebar-foot .muted { color: #8aa0b4; }
+/* Cohesive dark-blue backdrop to match the FoxSystems brand. */
+.login-screen {
+  background: radial-gradient(1200px 600px at 10% 0%, #14507a 0%, transparent 50%),
+              radial-gradient(1000px 700px at 100% 100%, #0e7490 0%, transparent 55%),
+              linear-gradient(135deg, #0a2236, #06141f);
+}
+.login-screen::before { background: #38bdf8; }
+.login-screen::after { background: #22d3ee; }
+
+/* Same backdrop, now gently animated: the gradient slowly drifts and the two
+   blurred blobs float around. Honors reduced-motion. */
+.login-screen {
+  background-size: 180% 180%, 180% 180%, 100% 100%;
+  animation: loginDrift 22s ease-in-out infinite alternate;
+}
+@keyframes loginDrift {
+  0%   { background-position: 0% 0%, 100% 100%, 0 0; }
+  100% { background-position: 35% 25%, 65% 75%, 0 0; }
+}
+.login-screen::before { will-change: transform, opacity; animation: blobA 15s ease-in-out infinite alternate; }
+.login-screen::after  { will-change: transform, opacity; animation: blobB 19s ease-in-out infinite alternate; }
+@keyframes blobA {
+  0%   { transform: translate(0, 0) scale(1);       opacity: .20; }
+  50%  { transform: translate(70px, 50px) scale(1.18); opacity: .33; }
+  100% { transform: translate(25px, 100px) scale(1.06); opacity: .26; }
+}
+@keyframes blobB {
+  0%   { transform: translate(0, 0) scale(1);        opacity: .20; }
+  50%  { transform: translate(-60px, -35px) scale(1.22); opacity: .30; }
+  100% { transform: translate(-25px, -90px) scale(1.08); opacity: .24; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .login-screen, .login-screen::before, .login-screen::after { animation: none; }
+}
+
+/* ---- RBAC permissions matrix ---- */
+.tabs { display: flex; gap: 6px; margin-bottom: 16px; border-bottom: 2px solid var(--line); }
+.tabs .tab {
+  padding: 9px 16px; border: none; background: none; font: inherit; cursor: pointer;
+  color: var(--muted); font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.tabs .tab.active { color: var(--green); border-bottom-color: var(--green); }
+.perm-table { width: 100%; border-collapse: collapse; }
+.perm-table th, .perm-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: center; }
+.perm-table th:first-child, .perm-table td.pmod { text-align: start; }
+.perm-table thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+.perm-table td.pmod { font-weight: 600; white-space: nowrap; }
+.perm-table input[type="checkbox"] { width: 17px; height: 17px; cursor: pointer; accent-color: var(--green); }
+.perm-table input.prow { width: 14px; height: 14px; accent-color: var(--muted); vertical-align: middle; }
+.perm-table tbody tr:hover { background: #f7fafc; }
+.pcell.overridden { background: var(--amber-l); border-radius: 6px; }
+.pcell.na { background: repeating-linear-gradient(45deg, transparent, transparent 4px, #f1f5f9 4px, #f1f5f9 8px); }
+
+.cb-col { width: 26px; }   /* select-all column in the devices registry */
+
+/* ---- list pagination ---- */
+.pager { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 14px; }
+.pager .btn[disabled] { opacity: .45; cursor: default; }
+
+/* ---- offline / sync status pill ---- */
+.offline-status { font-size: 12px; font-weight: 700; padding: 5px 11px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+.offline-status.off { background: var(--red-l); color: var(--red); }
+.offline-status.pend { background: var(--amber-l); color: var(--amber); }
+.offline-status.hidden { display: none !important; }
+/* Engineer materials balance: a depleted / over-used line. */
+tr.bal-empty td { background: var(--red-l); color: var(--red); }
+
+/* QR-coded devices: scan-to-inspect landing + label print preview. */
+.scan-wrap { max-width: 540px; margin: 0 auto; padding: 6px; }
+.scan-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
+.scan-head { display: flex; gap: 14px; align-items: center; }
+.scan-ic { width: 54px; height: 54px; border-radius: 14px; display: flex; align-items: center;
+  justify-content: center; font-size: 26px; color: #fff; flex: none; }
+.scan-title { font-size: 19px; font-weight: 700; }
+.scan-now { margin: 14px 0; padding: 10px 14px; background: var(--bg); border-radius: 10px; }
+.scan-q { font-weight: 600; margin: 6px 0 8px; }
+.scan-sts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.scan-st { padding: 16px 10px; border-radius: 12px; border: 2px solid var(--c); color: var(--c);
+  background: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: .12s; }
+.scan-st:hover { background: var(--c); color: #fff; }
+.scan-st:active { transform: scale(.97); }
+.scan-note { width: 100%; margin-top: 10px; padding: 10px; border: 1.5px solid var(--line);
+  border-radius: 10px; font: inherit; resize: vertical; }
+.scan-geo { display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--muted); font-size: 13px; }
+.scan-hist { margin-top: 18px; }
+.scan-hist h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 0 0 8px; }
+.scan-ev { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.scan-ev .dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex: none; }
+.scan-ev .se-main { flex: 1; min-width: 0; }
+.qr-mini { display: flex; align-items: center; gap: 12px; margin: 4px 0 10px; }
+.qr-mini-img { width: 84px; height: 84px; flex: none; }
+.qr-mini-img svg { width: 100%; height: 100%; }
+
+/* Selected status button on the scan screen. */
+.scan-st.sel { background: var(--c); color: #fff; box-shadow: 0 0 0 3px rgba(15,118,110,.15); }
+
+/* Per-type follow-up fields captured on a scan. */
+.scan-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 4px 0 4px; }
+.scan-f { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+/* Text/number/select boxes only — a tick box must keep its native size. */
+.scan-f select, .scan-f input:not([type=checkbox]) { padding: 9px 10px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px; font: inherit; color: var(--ink); background: #fff; }
+/* A tick-list answer (what the trap caught) takes the whole row, two columns
+   of boxes wide — a single column of twelve would bury the save button.
+   Two class names deep so it beats the .opt-picks column layout below. */
+.scan-f-wide { grid-column: 1 / -1; }
+.scan-f .scan-multi { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px;
+  max-height: none; }
+.scan-f .scan-multi .opt-pick { color: var(--ink); }
+@media (max-width: 480px) { .scan-fields { grid-template-columns: 1fr; } }
+
+/* What the last visit promised to do here — the first thing to read on
+   arriving at the trap, so it sits above the status buttons in amber. */
+.scan-promised { border: 1.5px solid #f59e0b; background: #fffbeb; border-radius: 12px;
+  padding: 10px 12px; margin: 10px 0 4px; }
+.scan-promised .sp-head { font-weight: 700; color: #92400e; margin-bottom: 4px; }
+.scan-promised .sp-item { color: #78350f; font-size: 14px; line-height: 1.6; }
+
+/* "From the scans": the facts this visit's QR scans already recorded, shown
+   under the report summary. Deliberately flat and quiet — it is evidence to
+   read, not a field to fill, so it carries no input styling. A plain block, so
+   a long fault list wraps on a phone instead of scrolling sideways. */
+
+/* QR shown in the scan detail header + printable per-trap label. */
+.scan-qr { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-inline-start: auto; }
+.scan-qr-img { width: 76px; height: 76px; }
+.scan-qr-img svg { width: 100%; height: 100%; }
+
+/* Inline QR thumbnail in the Device QR Codes list (click to print that trap). */
+.qr-td { width: 56px; }
+.qr-cell { width: 48px; height: 48px; padding: 2px; border: 1px solid var(--line);
+  border-radius: 8px; background: #fff; cursor: pointer; line-height: 0; }
+.qr-cell svg { width: 100%; height: 100%; display: block; }
+.qr-cell:hover { border-color: var(--green-d); }
+
+/* Device QR registry toolbar + scan status lines. */
+.dev-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+.dev-toolbar .spacer { flex: 1; }
+.toolbar-select { padding: 7px 10px; border: 1.5px solid var(--line); border-radius: 9px; font: inherit; background: #fff; }
+.scan-now.ok-line { background: var(--green-l); color: var(--green-d); }
+.scan-now.warn-line { background: #fef3c7; color: #b45309; }
+.warn-line { color: #b45309; }
+
+/* Visit device-coverage progress bar + pending rows. */
+.cov-bar { background: var(--line); border-radius: 6px; height: 8px; overflow: hidden; }
+.cov-bar span { display: block; height: 100%; background: var(--green); transition: width .3s; }
+tr.cov-pending td { background: #fff7ed; }
+/* Device coverage is split per device type, each block scanning its own type. */
+.cov-group { margin-top: 16px; }
+.cov-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 10px; flex-wrap: wrap; margin-bottom: 6px;
+}
+.cov-head h4 { margin: 0; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+
+/* ===== Smart Dispatch board ===== */
+.dispatch-board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; align-items: flex-start; }
+
+/* THE MONTH AS A MATRIX — a row per engineer, a column per day (or the two
+   swapped over; both layouts share these rules). Kept to a count and two
+   times so a whole month reads at a glance and stays light enough for a
+   phone.
+
+   FIT MEANS LEGIBLE, NOT SHRUNK. The table is no longer stretched to the box
+   — every day column is given the width its two lines need, and the box
+   scrolls in both directions with the names and the dates pinned. A month
+   that does not fit the screen is scrolled to, never squeezed into it. */
+.dispatch-board.dg-month { display: block; overflow-x: visible; padding-bottom: 0; }
+.dg-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.dg-tools .dg-count { margin-inline-start: auto; }
+.dg-wrap { overflow: auto; -webkit-overflow-scrolling: touch;
+  max-height: min(74vh, 760px); border: 1px solid var(--line, #ddd); border-radius: 6px; }
+/* Every table in the app is wrapped in a .table-scroll box at runtime (see
+   installTableScroll). For the matrix that box would be a SECOND scroller
+   inside this one — which is what stopped the month scrolling sideways and
+   would unpin the header row — so here it is dissolved and .dg-wrap does the
+   scrolling for both directions. */
+.dg-wrap > .table-scroll { overflow: visible; max-width: none; width: max-content;
+  min-width: 100%; }
+table.dg { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%;
+  font-size: 12px; }
+table.dg th, table.dg td { border-inline-end: 1px solid var(--line, #e3e3e3);
+  border-bottom: 1px solid var(--line, #e3e3e3); padding: 0; text-align: center; }
+table.dg thead th { position: sticky; top: 0; z-index: 3; background: var(--panel, #f6f7f8);
+  font-weight: 600; padding: 3px 2px; font-variant-numeric: tabular-nums;
+  box-shadow: inset 0 -1px 0 var(--line, #e3e3e3); }
+table.dg tfoot td, table.dg tfoot th { position: sticky; bottom: 0; z-index: 3;
+  background: var(--panel, #f6f7f8); font-weight: 700; font-size: 11.5px; padding: 4px 0;
+  font-variant-numeric: tabular-nums; box-shadow: inset 0 1px 0 var(--line, #e3e3e3); }
+/* The pinned edge: the engineer (or the date), always in view however far the
+   month is scrolled. */
+table.dg th.dg-name { position: sticky; inset-inline-start: 0; z-index: 2;
+  background: var(--panel, #f6f7f8); text-align: start; width: 168px; min-width: 168px;
+  font-weight: 600; }
+/* Padding is spelled out against thead/tfoot as well, because the shared
+   `table.dg thead th` rule that zeroes it is the more specific of the two —
+   and without this the engineer's total is printed hard up against the pinned
+   column's edge, which is exactly the kind of half-legible number this whole
+   change is about. */
+table.dg th.dg-name, table.dg thead th.dg-name,
+table.dg tfoot th.dg-name { padding: 5px 8px; }
+th.dg-name.dg-corner, table.dg thead th.dg-name, table.dg tfoot th.dg-name { z-index: 5; }
+.dg-nrow { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.dg-nm { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; }
+.dg-tot { flex: none; opacity: .6; font-weight: 400; font-variant-numeric: tabular-nums; }
+th.dg-dayh .dg-nm b { font-size: 13px; margin-inline-end: 4px; }
+/* The day heading: which weekday over which date, so a column is recognisable
+   without counting across from the first. */
+th.dg-d { width: 54px; min-width: 54px; line-height: 1.1; }
+th.dg-d i { display: block; font-style: normal; font-size: 9px; opacity: .55; font-weight: 500; }
+th.dg-d b { font-size: 12.5px; }
+th.dg-d.dg-rest, td.dg-sum.dg-rest { background: var(--panel-2, #eceff1); }
+tr.dg-rest-row th.dg-name { background: var(--panel-2, #eceff1); }
+/* Names above, in the days-down layout — two short lines rather than one long
+   one nobody can read. */
+table.dg thead th.dg-eng-h { width: 76px; min-width: 76px; padding: 4px 3px; line-height: 1.15; }
+th.dg-eng-h .dg-nm { display: block; white-space: normal; overflow: hidden; font-size: 10.5px; }
+th.dg-eng-h .dg-tot { display: block; font-size: 10px; }
+td.dg-cell { height: 38px; width: 54px; min-width: 54px; cursor: pointer; line-height: 1.15;
+  font-variant-numeric: tabular-nums; }
+table.dg-by-day td.dg-cell { width: 76px; min-width: 76px; }
+td.dg-cell:focus-visible { outline: 2px solid var(--accent, #0d7480); outline-offset: -2px; }
+td.dg-cell b { display: block; font-size: 13px; font-weight: 700; }
+/* The two hours are one LTR run even in Arabic — left to itself the mirror
+   turns 08–16 into 16–08, which reads as a shift that ends before it starts. */
+td.dg-cell .dg-t { display: block; font-size: 10px; opacity: .7; letter-spacing: -.02em;
+  direction: ltr; unicode-bidi: isolate; }
+td.dg-cell.l1 { background: rgba(13,116,128,.10); }
+td.dg-cell.l2 { background: rgba(13,116,128,.20); }
+td.dg-cell.l3 { background: rgba(13,116,128,.32); }
+td.dg-cell.l4 { background: rgba(13,116,128,.45); }
+td.dg-cell.dg-over { outline: 2px dashed var(--accent, #0d7480); outline-offset: -2px; }
+td.dg-cell.dg-open { position: relative; outline: 2px solid var(--accent, #0d7480);
+  outline-offset: -2px; }
+
+/* THE CELL, OPENED. Only the one you click fetches its visits, so the matrix
+   costs nothing until it is asked. Each row is dragged on its own. */
+.dg-pop { position: absolute; z-index: 20; top: 100%; left: 50%; transform: translateX(-50%);
+  min-width: 190px; max-width: 260px; background: var(--panel, #fff);
+  border: 1px solid var(--line, #ccc); border-radius: 6px; padding: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.18); text-align: left; cursor: default; }
+.dg-pop-h { display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  font-size: 11px; opacity: .75; padding: 2px 4px 6px; white-space: nowrap; }
+.dg-v { display: flex; gap: 6px; align-items: baseline; padding: 4px 6px; border-radius: 4px;
+  cursor: grab; background: var(--panel-2, #f2f4f5); margin-top: 3px; }
+.dg-v:hover { background: var(--hover, #e6eaec); }
+.dg-v:active { cursor: grabbing; }
+.dg-v-t { font-size: 11px; font-variant-numeric: tabular-nums; opacity: .7; flex: none; }
+.dg-v-n { font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* A narrow screen gets a narrower name column and slightly tighter days — but
+   it KEEPS the hours, which used to be dropped and left a bare number nobody
+   could read a shift off. */
+@media (max-width: 720px) { table.dg th.dg-name { width: 132px; min-width: 132px;
+    font-size: 11.5px; padding: 5px 6px; }
+  th.dg-d, td.dg-cell { width: 50px; min-width: 50px; }
+  table.dg-by-day td.dg-cell, table.dg thead th.dg-eng-h { width: 72px; min-width: 72px; }
+  .dg-pop { position: fixed; left: 8px; right: 8px; top: auto; bottom: 12px;
+    transform: none; max-width: none; } }
+.dp-col { flex: 0 0 240px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
+.dp-col-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.dp-col-head strong { font-size: 13.5px; }
+.dp-col-head .btn { margin-inline-start: auto; }
+.dp-col-body { padding: 10px; min-height: 90px; display: flex; flex-direction: column; gap: 8px; border-radius: 0 0 12px 12px; transition: background .15s; }
+.dp-col-body.dp-over { background: rgba(31,116,214,.10); outline: 2px dashed var(--brand, #1f74d6); outline-offset: -4px; }
+.dp-card { background: #fff; border: 1px solid var(--line); border-inline-start: 4px solid var(--muted); border-radius: 9px; padding: 9px 10px; cursor: grab; box-shadow: var(--shadow); }
+.dp-card:active { cursor: grabbing; }
+.dp-card.dragging { opacity: .45; }
+.dp-card.b-scheduled { border-inline-start-color: #2563eb; }
+.dp-card.b-in_progress { border-inline-start-color: #d97706; }
+.dp-card.b-completed { border-inline-start-color: #16a34a; }
+.dp-card.b-cancelled { border-inline-start-color: #dc2626; }
+.dp-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.dp-time { font-weight: 700; font-size: 13px; }
+.dp-client { font-weight: 600; font-size: 13px; }
+.dp-empty { color: var(--muted); font-size: 12.5px; text-align: center; padding: 16px 6px; border: 1px dashed var(--line); border-radius: 8px; }
+/* Assigned work sitting outside the shift currently being dispatched. */
+.dp-card.dp-out { background: #fffbeb; }
+.dp-card.dp-out .dp-time { color: #b45309; }
+.dp-shift-days { font-size: 11px; font-weight: 700; color: var(--green-d); background: var(--green-l); padding: 2px 8px; border-radius: 20px; }
+
+/* ⇄ — the move a thumb can make, in place of a drag (phone only; see app.js). */
+.dp-move {
+  border: 1px solid var(--line); background: #fff; color: var(--green-d);
+  font: inherit; font-size: 16px; line-height: 1; border-radius: 9px;
+  min-width: 38px; min-height: 34px; padding: 4px 8px; cursor: pointer; flex: none;
+}
+.dp-move:active { background: var(--green-l); }
+/* The sheet it opens: the board's own columns, one tappable row each. */
+.mv-what { margin: 0 0 12px; font-size: 14px; }
+.mv-list { display: flex; flex-direction: column; gap: 8px; }
+.mv-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; text-align: start; font: inherit; cursor: pointer;
+  background: #fff; border: 1.5px solid var(--line); border-radius: 12px;
+  padding: 13px 14px; min-height: 48px; font-weight: 600; color: var(--ink);
+}
+.mv-opt:active { background: var(--green-l); border-color: var(--green); }
+.mv-opt.mv-cur { border-color: var(--green); background: var(--green-l); }
+
+/* SLA strip */
+.sla-strip { margin-bottom: 12px; }
+.sla-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sla-chip { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.sla-chip.sla-overdue { background: #fde8e8; color: #b91c1c; }
+.sla-chip.sla-due { background: #fef3e2; color: #b45309; }
+.sla-chip.sla-ok { background: #e7f6ec; color: #15803d; }
+.sla-row { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 10px; margin-top: 6px; border-radius: 8px; cursor: pointer; }
+.sla-row.sla-overdue { background: #fef2f2; border-inline-start: 3px solid #dc2626; }
+.sla-row.sla-due { background: #fffbeb; border-inline-start: 3px solid #d97706; }
+
+/* ===== Weekly shift roster ===== */
+.sh-legend { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px; }
+.sh-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 20px;
+  font-size: 12px; font-weight: 700; color: #fff; background: var(--sh, var(--green));
+}
+.sh-chip.off { color: var(--ink); }
+.sh-chip .sh-time { font-weight: 500; opacity: .85; }
+.sh-table { min-width: 860px; }
+.sh-table th, .sh-table td { text-align: center; vertical-align: middle; }
+.sh-table th.sh-agent { text-align: start; min-width: 170px; }
+.sh-table th.sh-today { color: var(--green-d); }
+.sh-cell { min-width: 96px; padding: 6px 4px; }
+.sh-cell.sh-today { background: var(--green-l); }
+.sh-cell.editable { cursor: pointer; }
+.sh-cell.editable:hover { outline: 2px solid var(--green); outline-offset: -3px; border-radius: 8px; }
+.sh-cell .sh-time { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+.sh-cell .sh-empty { color: var(--muted); font-size: 16px; }
+.sh-load { display: inline-block; margin-top: 3px; font-size: 11px; color: var(--muted); }
+/* Visits booked on a day the agent is off (or unrostered) — worth a second look. */
+.sh-load.sh-clash { color: #b45309; font-weight: 700; }
+.sh-total { background: var(--bg); }
+/* A day can hold several blocks; they stack inside the cell. */
+.sh-block { display: block; margin-bottom: 4px; }
+.sh-block:last-child { margin-bottom: 0; }
+.sh-daytotal { font-size: 11px; font-weight: 700; color: var(--muted); margin-top: 2px; }
+.sh-weekhours { font-size: 11px; font-weight: 700; color: var(--green-d); }
+
+/* Day editor: one row per block worked, hours typed by hand. */
+.sh-rows-head, .sh-row {
+  display: grid; grid-template-columns: 1.4fr 1.1fr .9fr .9fr 1.2fr 48px 28px;
+  gap: 8px; align-items: center;
+}
+.sh-rows-head { font-size: 11.5px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.sh-row { margin-bottom: 8px; }
+.sh-row input, .sh-row select { width: 100%; margin: 0; }
+/* 24-hour time entry: fixed-width digits, and a clear flag when unparseable. */
+input.hhmm { font-variant-numeric: tabular-nums; letter-spacing: .5px; }
+input.hhmm.bad { border-color: var(--red); background: var(--red-l); }
+.sh-rows-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 4px 0 10px; }
+.sh-daytotal-lg { font-weight: 700; }
+@media (max-width: 640px) {
+  .sh-rows-head { display: none; }
+  .sh-row { grid-template-columns: 1fr 1fr; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+}
+.sh-daybar { display: flex; gap: 10px; flex-wrap: wrap; }
+.sh-daybox { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; }
+tr.sh-retired { opacity: .55; }
+
+/* Optimize-route preview modal */
+.opt-summary { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.opt-summary > div { flex: 1; min-width: 100px; background: var(--bg); border-radius: 10px; padding: 10px 12px; }
+.opt-summary .opt-saved { background: #e7f6ec; }
+.opt-summary strong { font-size: 18px; }
+.opt-order { margin: 4px 0 14px; padding-inline-start: 22px; line-height: 1.9; }
+
+/* ===== Agent "My Day" route list ===== */
+.md-stop { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--line); border-inline-start: 4px solid var(--muted); border-radius: 11px; padding: 12px 14px; margin-bottom: 10px; box-shadow: var(--shadow); }
+.md-stop.b-scheduled { border-inline-start-color: #2563eb; }
+.md-stop.b-in_progress { border-inline-start-color: #d97706; }
+.md-stop.b-completed { border-inline-start-color: #16a34a; }
+.md-stop.b-cancelled { border-inline-start-color: #dc2626; opacity: .7; }
+.md-seq { flex: 0 0 30px; height: 30px; border-radius: 50%; background: var(--brand-grad); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.md-main { flex: 1; min-width: 0; }
+.md-time { font-size: 12.5px; color: var(--muted); margin-bottom: 2px; }
+.md-client { font-weight: 600; font-size: 14px; }
+.md-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; justify-content: flex-end; }
+@media (max-width: 640px) { .md-stop { flex-wrap: wrap; } .md-actions { width: 100%; justify-content: flex-start; } }
+
+/* Owner dashboard cockpit */
+.cockpit-kpis { margin-top: 4px; }
+.sc-trend { font-size: 12px; font-weight: 600; color: var(--muted); margin-top: 3px; }
+.sc-trend.up { color: var(--green); }
+.sc-trend.down { color: var(--red); }
+.util-table td.num, .util-table th.num { text-align: right; white-space: nowrap; }
+.util-table td { vertical-align: middle; }
+.util-bar { height: 8px; border-radius: 6px; background: #e6edf3; overflow: hidden; min-width: 80px; }
+.util-bar span { display: block; height: 100%; border-radius: 6px;
+  background: linear-gradient(90deg, var(--cyan), var(--green)); }
+
+/* ---- post-visit rating stars ---- */
+.stars-input button { background: none; border: none; font-size: 30px; cursor: pointer; color: #f59e0b; padding: 2px 4px; }
+.rated-stars { font-size: 24px; color: #f59e0b; letter-spacing: 3px; }
+
+/* ======================================================================
+   PHONE LAYOUT — html.pc-phone
+   ======================================================================
+   Set by index.html on a small touch screen only (the Android app and phone
+   browsers alike); a desktop, a narrowed desktop window and a tablet never get
+   it, so everything above this line keeps working exactly as it did.
+
+   The rule this section follows: ONE COLUMN, ONE DIRECTION OF SCROLL, AT
+   READABLE SIZE. An engineer standing in a kitchen with one thumb free should
+   never pinch-zoom, never drag the page sideways, and never hunt for the save
+   button. Data tables become stacked cards, forms become one column of large
+   inputs, dialogs become full-screen sheets with the actions pinned to the
+   bottom, and the sections a role works in every day sit on a bottom tab bar.
+   ---------------------------------------------------------------------- */
+
+/* ---- foundation ---- */
+html.pc-phone body { font-size: 15px; }
+/* Nothing may push the page sideways — that is the whole point. */
+html.pc-phone { overflow-x: hidden; }
+/* Room at the foot for the tab bar (plus the gesture area on modern phones). */
+html.pc-phone .view {
+  max-width: none; padding: 12px 12px calc(84px + env(safe-area-inset-bottom));
+}
+html.pc-phone .app { min-height: 100dvh; }
+
+/* ---- sidebar as a slide-over drawer ---- */
+html.pc-phone .sidebar {
+  position: fixed; top: 0; bottom: 0; inset-inline-start: 0; height: 100%;
+  width: min(84vw, 300px); z-index: 60; box-shadow: 4px 0 24px rgba(0,0,0,.35);
+  transition: width .2s ease;
+  /* The whole drawer is ONE scrolling box — logo, list and footer — so a finger
+     that lands on the footer or the logo still moves the menu instead of
+     finding nothing to scroll and handing the gesture to the page. `contain`
+     stops the drawer's scroll from chaining into that page at either end,
+     which is what used to scroll the dashboard behind the open drawer. */
+  overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch; touch-action: pan-y;
+}
+html.pc-phone #nav { flex: 0 0 auto; overflow: visible; }
+/* Short menu: keep the footer parked at the bottom (auto margin collapses to 0
+   once the list is long enough to scroll). */
+html.pc-phone .sidebar-foot { margin-top: auto; }
+/* The open drawer always shows full labels (overrides the narrow-screen rail). */
+html.pc-phone .nav-item { justify-content: flex-start; padding: 13px 16px; font-size: 15px; }
+html.pc-phone .brand-sm { justify-content: flex-start; padding: 0 22px 18px; }
+html.pc-phone .nav-item span:last-child, html.pc-phone .brand-sm span { display: inline; }
+html.pc-phone .brand-logo-sm { width: 130px; }
+html.pc-phone .sidebar-foot .user-box { display: block; }
+html.pc-phone .sidebar-foot .link-btn { display: inline; text-align: start; padding: 9px 0; }
+html.pc-phone .powered-sm { display: block; }
+html.pc-phone #nav { padding: 10px; }
+/* Closed = gone completely. */
+html.pc-phone .app.nav-collapsed .sidebar { width: 0; padding: 0; box-shadow: none; }
+/* Dim the page behind the open drawer (tap it to close — see app.js). */
+html.pc-phone .app:not(.nav-collapsed)::after {
+  content: ""; position: fixed; inset: 0; background: rgba(7,24,42,.45); z-index: 55;
+  /* A drag on the dimmed page does nothing (a tap still closes the drawer) —
+     without this the backdrop passes the gesture on to the document. */
+  touch-action: none;
+}
+/* Belt and braces for the same thing: while the drawer is open the document
+   itself is frozen (app.js adds .drawer-open and restores the scroll offset). */
+html.pc-phone.drawer-open, html.pc-phone.drawer-open body { overflow: hidden; }
+
+/* ---- bottom tab bar (phone only; hidden everywhere else) ---- */
+.tabbar { display: none; }
+html.pc-phone .tabbar {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 45;
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  background: rgba(255,255,255,.98); border-top: 1px solid var(--line);
+  box-shadow: 0 -4px 18px rgba(15,23,42,.10);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+html.pc-phone .tab-item {
+  border: none; background: none; font: inherit; cursor: pointer;
+  min-height: 58px; padding: 8px 3px 9px; display: flex; align-items: center;
+  justify-content: center; text-align: center; line-height: 1.2;
+  font-size: 11.5px; font-weight: 700; color: var(--muted);
+  box-shadow: inset 0 3px 0 transparent;
+  /* Long section names must not widen the bar or wrap to three lines. */
+  overflow: hidden; word-break: break-word;
+}
+html.pc-phone .tab-item.active {
+  color: var(--green-d); background: var(--green-l);
+  box-shadow: inset 0 3px 0 var(--green);
+}
+html.pc-phone .tab-item:active { background: #eef4fb; }
+
+/* ---- topbar: buttons stay tappable, search keeps the rest of the row ---- */
+html.pc-phone .topbar { padding: 8px 10px; gap: 6px; }
+/* THE ANDROID APP SWALLOWS THE TOP-LEFT CORNER. Up to and including APK 1.7 an
+   invisible 56dp View sits over the corner (long-press it to change the server
+   URL). Android gives a long-clickable view every touch that lands on it, so
+   the ☰ underneath was dead IN THE APP ONLY — the same button works in a phone
+   browser and on desktop. 1.8 drops that overlay and announces itself, and
+   app.js only sets .pc-app-hotspot for builds that don't; until the new APK is
+   installed, ☰ simply starts clear of the corner. NOT limited to .pc-phone: a
+   WebView that never measured itself as a phone keeps the desktop layout, and
+   the corner it cannot tap is exactly the same one. The width comes from
+   syncCornerGuard() in app.js, which measures the page's own zoom. */
+html.pc-app-hotspot .topbar .nav-toggle { margin-inline-start: var(--pc-corner, 62px); }
+
+/* ---- "your app is out of date" bar (old APKs only) ---------------------- */
+/* Sits at the foot of the screen, above the phone tab bar and clear of the
+   home indicator. Shown only inside an APK that cannot answer appVersion() —
+   the builds whose invisible corner view swallows the ☰ tap — and dismissed
+   for the session, so it comes back tomorrow until the update is installed. */
+.app-update {
+  position: fixed; inset-inline: 8px; z-index: 52;
+  bottom: calc(8px + env(safe-area-inset-bottom));
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 12px;
+  background: #0f172a; color: #fff; font-size: 13px; line-height: 1.35;
+  box-shadow: 0 8px 24px rgba(7, 24, 42, .35);
+}
+html.pc-phone .app-update { bottom: calc(70px + env(safe-area-inset-bottom)); }
+.app-update span { flex: 1 1 auto; }
+.app-update a {
+  flex: 0 0 auto; background: var(--green, #16a34a); color: #fff;
+  text-decoration: none; font-weight: 700; padding: 8px 12px; border-radius: 8px;
+}
+.app-update button {
+  flex: 0 0 auto; background: none; border: none; color: #cbd5e1;
+  font-size: 16px; cursor: pointer; padding: 4px 6px; line-height: 1;
+}
+html.pc-phone .topbar .icon-btn { min-width: 36px; min-height: 36px; padding: 4px; }
+html.pc-phone .quick-search { min-width: 0; }
+html.pc-phone .quick-search input { padding: 9px 14px 9px 34px; font-size: 16px; }
+html[dir="rtl"].pc-phone .quick-search input { padding: 9px 34px 9px 14px; }
+html.pc-phone .bell-menu { width: min(92vw, 340px); }
+
+/* ---- headings, toolbars, stat cards ---- */
+html.pc-phone .page-head { margin-bottom: 14px; gap: 10px; }
+html.pc-phone .page-head h2 { font-size: 20px; }
+/* Several pages build their button group as an inline `display:flex` with no
+   wrap (month arrows + filters on the calendar, for one). Unwrapped, that row
+   is ~500px wide and the browser zooms the WHOLE PAGE out to fit it — the very
+   thing this layout exists to stop. Inline styles set display, never wrap, so
+   this reaches them all. */
+html.pc-phone .page-head > div { flex-wrap: wrap; min-width: 0; }
+html.pc-phone .cards { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+html.pc-phone .stat-card { padding: 13px; gap: 10px; border-radius: 14px; }
+html.pc-phone .stat-card .sc-ic { width: 38px; height: 38px; border-radius: 12px; font-size: 18px; }
+html.pc-phone .stat-card .v { font-size: 20px; }
+html.pc-phone .stat-card .l { font-size: 11.5px; }
+html.pc-phone .panel { padding: 14px; border-radius: 14px; }
+html.pc-phone .toolbar { gap: 8px; }
+html.pc-phone .toolbar input, html.pc-phone .toolbar select,
+html.pc-phone .toolbar-select { flex: 1 1 140px; min-height: 42px; font-size: 15px; }
+/* Every tap target on a phone is a finger, not a mouse pointer. */
+html.pc-phone .btn, html.pc-phone .btn-primary { min-height: 44px; padding: 11px 16px; }
+html.pc-phone .btn.sm { min-height: 38px; padding: 8px 13px; }
+html.pc-phone .link-btn { padding: 9px 0; }
+html.pc-phone .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+html.pc-phone .kv { grid-template-columns: 1fr; gap: 0; }
+html.pc-phone .kv > div:nth-child(odd) {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; margin-top: 10px;
+}
+
+/* ---- data tables become stacked cards ----------------------------------
+   A table of 8 columns cannot be read on a 360px screen, and scrolling it
+   sideways inside its own box means reading a row in two passes. So each row
+   becomes a card: the first cell is its title, every other cell is labelled
+   with its own column heading (stamped as data-label in app.js). Tables that
+   are genuinely a matrix — the permission grid, the shift roster, the invoice
+   line-item editor — keep the horizontal scroll box instead. */
+html.pc-phone table.pc-cards { display: block; }
+html.pc-phone table.pc-cards thead { display: none; }
+/* th is in this list because totals rows are built from <th> — left as table
+   cells they lay themselves out in a row and take the card sideways. */
+html.pc-phone table.pc-cards tbody, html.pc-phone table.pc-cards tfoot,
+html.pc-phone table.pc-cards tr, html.pc-phone table.pc-cards td,
+html.pc-phone table.pc-cards tbody th, html.pc-phone table.pc-cards tfoot th { display: block; width: auto; }
+/* …and they must stop looking like column headings once they are card lines. */
+html.pc-phone table.pc-cards tbody th, html.pc-phone table.pc-cards tfoot th {
+  background: none; text-transform: none; letter-spacing: 0; color: var(--ink);
+}
+html.pc-phone table.pc-cards tr {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  padding: 11px 13px; margin-bottom: 10px; box-shadow: var(--shadow);
+}
+html.pc-phone table.pc-cards tbody tr:hover { background: #fff; }
+html.pc-phone table.pc-cards tr.clickable:active { background: var(--green-l); }
+html.pc-phone table.pc-cards td, html.pc-phone table.pc-cards tbody th,
+html.pc-phone table.pc-cards tfoot th {
+  border: 0; padding: 4px 0; font-size: 14px; font-weight: 500;
+  display: flex; flex-wrap: wrap; gap: 4px 12px;
+  align-items: baseline; justify-content: space-between;
+}
+/* Lists put a quieter second line under a value ("Last service: …"). Give it a
+   line of its own rather than letting it run on beside the value. */
+html.pc-phone table.pc-cards td > .small, html.pc-phone table.pc-cards td > .muted {
+  flex: 1 1 100%; text-align: end;
+}
+html.pc-phone table.pc-cards td::before, html.pc-phone table.pc-cards tbody th::before,
+html.pc-phone table.pc-cards tfoot th::before {
+  content: attr(data-label); flex: 0 0 38%; color: var(--muted);
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+}
+html.pc-phone table.pc-cards [data-label=""]::before,
+html.pc-phone table.pc-cards .pc-title::before,
+html.pc-phone table.pc-cards .pc-wide::before { content: none; }
+/* The row's headline — the client, the invoice number, the device code. */
+html.pc-phone table.pc-cards .pc-title {
+  display: block; font-size: 15.5px; font-weight: 700; padding: 0 0 7px;
+  margin-bottom: 5px; border-bottom: 1px solid var(--line);
+}
+/* Cells holding controls (row buttons, checkboxes, a QR thumbnail) get the
+   full width rather than being squeezed into the value column. */
+html.pc-phone table.pc-cards .pc-wide { display: block; padding-top: 8px; }
+html.pc-phone table.pc-cards .pc-wide .row-actions { justify-content: flex-start; flex-wrap: wrap; }
+html.pc-phone table.pc-cards td:empty, html.pc-phone table.pc-cards tbody th:empty,
+html.pc-phone table.pc-cards tfoot th:empty { display: none; }
+/* Header cells that hold a control (select-all) survive as a plain strip. */
+html.pc-phone table.pc-cards.pc-headkeep thead { display: block; }
+html.pc-phone table.pc-cards.pc-headkeep thead tr {
+  display: block; background: none; border: 0; box-shadow: none;
+  padding: 0 2px 8px; margin: 0;
+}
+html.pc-phone table.pc-cards.pc-headkeep th { display: none; }
+html.pc-phone table.pc-cards.pc-headkeep th.pc-ctl {
+  display: flex; align-items: center; gap: 9px; width: auto; background: none;
+  font-size: 12px; text-transform: none; letter-spacing: 0; padding: 4px 0;
+}
+/* Captions that only make sense once a column heading has become a card label. */
+.pc-only { display: none; }
+html.pc-phone .pc-only { display: inline; }
+html.pc-phone table.pc-cards td.num { justify-content: space-between; }
+/* Sub-tables (a contract's per-site breakdown) stay simple lists. */
+html.pc-phone .ct-sites-detail td { padding: 0 0 8px; }
+
+/* ---- forms: one column, large controls ---- */
+html.pc-phone .form-grid { grid-template-columns: 1fr; gap: 12px; }
+/* Counters (lamps, cables, bait points…) stay two-up: short numeric fields in
+   one column turn a report into a scrolling marathon. */
+html.pc-phone .form-grid.compact { grid-template-columns: 1fr 1fr; gap: 10px; }
+html.pc-phone .field label { font-size: 13px; margin-bottom: 6px; }
+html.pc-phone .field input, html.pc-phone .field select, html.pc-phone .field textarea,
+html.pc-phone .scan-f input:not([type=checkbox]), html.pc-phone .scan-f select, html.pc-phone .scan-note {
+  /* 16px is the size below which mobile browsers zoom the page on focus. */
+  font-size: 16px; padding: 12px 13px; border-radius: 12px; min-height: 46px;
+}
+html.pc-phone .field textarea { min-height: 108px; }
+html.pc-phone .form-actions { flex-direction: row; gap: 10px; }
+html.pc-phone .form-actions .btn { flex: 1; min-height: 48px; }
+
+/* ---- dialogs become full-screen sheets ---- */
+html.pc-phone .modal-overlay { padding: 0; align-items: stretch; overflow: hidden; }
+html.pc-phone .modal {
+  max-width: none; width: 100%; height: 100%; border-radius: 0;
+  display: flex; flex-direction: column;
+}
+html.pc-phone .modal-head { padding: 14px 16px; flex: none; }
+html.pc-phone .modal-head h3 { font-size: 16px; }
+html.pc-phone .modal-body {
+  padding: 16px 16px calc(10px + env(safe-area-inset-bottom));
+  flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
+/* Save is always in the same place — pinned to the foot of the sheet, not
+   somewhere below the fold of a long form. */
+html.pc-phone .modal-body .form-actions {
+  position: sticky; bottom: 0; z-index: 2; background: #fff;
+  margin: 18px -16px calc(-10px - env(safe-area-inset-bottom));
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+}
+
+/* ---- login on a phone ----
+   The card is a fixed 380px on desktop, which is wider than the screen once
+   the page is laid out at the device's own width. */
+html.pc-phone .login-screen { padding: 16px; }
+html.pc-phone .login-card { width: 100%; max-width: 400px; padding: 26px 20px; border-radius: 18px; }
+html.pc-phone .login-card h1 { font-size: 21px; }
+html.pc-phone .login-card input { font-size: 16px; padding: 13px 14px; }
+html.pc-phone .btn-primary { min-height: 50px; }
+
+/* ---- screens with their own geometry ---- */
+/* The month grid keeps its seven columns and scrolls as one piece, so the
+   weekday header stays over the right column (see .cal-scroll in app.js). */
+html.pc-phone .cal-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+html.pc-phone .cal-scroll .cal-grid { min-width: 620px; }
+html.pc-phone .cal-cell { min-height: 82px; }
+/* THE DISPATCH BOARD ON A PHONE. On a desktop it is a row of 240px columns
+   dragged into one another; on a phone neither half of that works — the row
+   only ever showed one and a half columns, and HTML5 drag-and-drop does not
+   fire on a touch screen at all, so the board could be looked at and not
+   used. Here the columns STACK, full width, one direction of scroll like
+   every other screen, and a visit is moved by tapping ⇄ (app.js). The month
+   matrix stays a matrix — it is read across AND down — and scrolls inside its
+   own box with the engineer's name pinned. */
+html.pc-phone .dispatch-board { display: block; overflow-x: visible; padding-bottom: 0; }
+html.pc-phone .dp-col { width: 100%; margin-bottom: 10px; border-radius: 14px; }
+html.pc-phone .dp-col-head { padding: 11px 12px; }
+html.pc-phone .dp-col-head strong { font-size: 15px; }
+html.pc-phone .dp-col-body { padding: 10px; min-height: 0; gap: 10px; }
+html.pc-phone .dp-card { padding: 12px 13px; border-radius: 12px; }
+html.pc-phone .dp-card-top { gap: 8px; margin-bottom: 5px; }
+html.pc-phone .dp-client { font-size: 14.5px; }
+/* An engineer with nothing booked is worth one quiet line, not a drop zone
+   the size of a card — there is nothing to drop on a phone. */
+html.pc-phone .dp-empty { padding: 7px 4px; border: 0; font-size: 12px; }
+/* The filters: two to a row, at a size a finger hits. */
+html.pc-phone .dp-filters { width: 100%; gap: 8px; }
+/* Regrouped rather than reflowed: the four pickers two to a row, the day being
+   dispatched on a line of its own, and the three ways of changing it on the
+   last one. Four rows instead of six, and the same order in Arabic. */
+html.pc-phone .dp-filters select {
+  order: 1; flex: 1 1 44%; min-width: 0; min-height: 44px; font-size: 16px;
+}
+html.pc-phone .dp-filters input[type=date] {
+  order: 2; flex: 1 1 100%; min-width: 0; min-height: 44px; font-size: 16px;
+}
+html.pc-phone .dp-filters .btn { order: 3; flex: 1 1 26%; }
+/* The month matrix: bigger cells (a finger, not a pointer), and the day list
+   it opens is a sheet at the foot of the screen (see the 720px rule above). */
+html.pc-phone .dg-wrap { border-radius: 12px; max-height: 62vh; }
+html.pc-phone td.dg-cell { height: 46px; }
+html.pc-phone td.dg-cell b { font-size: 15px; }
+html.pc-phone td.dg-cell .dg-t { font-size: 10px; }
+html.pc-phone table.dg thead th { padding: 5px 2px; font-size: 12px; }
+html.pc-phone th.dg-d b { font-size: 13px; }
+html.pc-phone .dg-tools { gap: 8px; }
+html.pc-phone .dg-tools .cal-modes { flex: 1 1 100%; }
+html.pc-phone .dg-tools .cal-modes .btn { flex: 1 1 50%; min-height: 40px; }
+html.pc-phone .dg-tools .dg-count { margin-inline-start: 0; }
+html.pc-phone .dg-v { padding: 8px 8px; align-items: center; }
+html.pc-phone .dg-v-n { font-size: 13.5px; flex: 1 1 auto; }
+/* The day list opens as a sheet at the foot of the screen — which is exactly
+   where the tab bar lives, so it has to sit ABOVE it (z-index 45) and stop
+   short of it, or a long day's visits are dealt out under the tab bar and
+   cannot be reached at all. */
+html.pc-phone .dg-pop {
+  padding: 10px; z-index: 50; bottom: calc(66px + env(safe-area-inset-bottom));
+  max-height: 50vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+html.pc-phone .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+/* A finger, not a pointer: both corner buttons on an attachment go up to 34px,
+   and the comment line under it gets a proper row height. NOT scoped to
+   .pc-phone: inside the APK a WebView that never measured itself as a phone
+   keeps the desktop layout at 900px and zooms it down, and the small buttons
+   land on the glass at less than half their size — which is why ✎ "was not
+   there" in the app while it was obvious on a desktop. Any touch screen and any
+   app build gets the big ones. */
+html.pc-phone .photo-item .rm, html.pc-app .photo-item .rm { width: 34px; height: 34px; font-size: 15px; }
+html.pc-phone .photo-item .ed, html.pc-app .photo-item .ed { width: 34px; height: 34px; font-size: 16px; inset-inline-end: 47px; }
+html.pc-phone .photo-item .cap, html.pc-app .photo-item .cap { padding: 10px 9px; min-height: 40px; }
+@media (pointer: coarse) {
+  .photo-item .rm { width: 34px; height: 34px; font-size: 15px; }
+  .photo-item .ed { width: 34px; height: 34px; font-size: 16px; inset-inline-end: 47px; }
+  .photo-item .cap { padding: 10px 9px; min-height: 40px; }
+}
+html.pc-phone .map-thumbs { grid-template-columns: 1fr; }
+html.pc-phone .rdoc { padding: 16px 14px; border-radius: 12px; }
+html.pc-phone .rdoc-meta { grid-template-columns: 1fr; }
+html.pc-phone .rdoc-sigs { flex-direction: column; gap: 18px; }
+html.pc-phone .bar-row { grid-template-columns: 92px 1fr auto; gap: 8px; }
+html.pc-phone .bar-val { min-width: 48px; }
+html.pc-phone .scan-wrap { padding: 0; }
+html.pc-phone .scan-st { padding: 18px 10px; font-size: 16px; }
+/* The button that ends the visit sits above the tab bar, never under it. */
+html.pc-phone .visit-save-bar {
+  bottom: calc(58px + env(safe-area-inset-bottom));
+  padding: 12px; border-radius: 14px;
+}
+html.pc-phone .visit-save-bar .btn { min-width: 0; flex: 1 1 100%; }
+html.pc-phone .toast {
+  inset-inline: 12px; inset-inline-end: 12px; text-align: center;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+}
+html.pc-phone .pager { justify-content: center; }
+
+/* --- In-app QR scanner (camera viewfinder in a modal) ------------------ */
+.qr-scan .qr-view {
+  position: relative; width: 100%; aspect-ratio: 4 / 3; background: #000;
+  border-radius: 12px; overflow: hidden;
+}
+.qr-scan video { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Aiming box — purely visual; the decoder reads the whole frame. */
+.qr-scan .qr-frame {
+  position: absolute; inset: 18% 18%; border: 3px solid rgba(255,255,255,.9);
+  border-radius: 14px; box-shadow: 0 0 0 100vmax rgba(0,0,0,.28);
+}
+.qr-scan #qr-hint, .qr-scan #pf-camhint { margin-top: 10px; text-align: center; }
+.qr-scan #qr-manual { text-transform: uppercase; }
+
+/* --- Photos taken in-app, queued in the attachment dialog -------------- */
+.shot-strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+.shot-strip:empty { margin: 0; }
+.shot { position: relative; display: inline-block; }
+.shot img {
+  width: 74px; height: 74px; object-fit: cover;
+  border-radius: 8px; border: 1px solid var(--line);
+}
+.shot-x {
+  position: absolute; top: -6px; inset-inline-end: -6px;
+  width: 20px; height: 20px; line-height: 18px; padding: 0;
+  border: 0; border-radius: 50%; cursor: pointer;
+  background: #dc2626; color: #fff; font-size: 12px;
+}
+
+/* --- One comment per attachment, typed before the upload ---------------- */
+/* Every picture gets its own words, so the dialog is a LIST of rows — a
+   thumbnail, a comment box that starts empty, and the name the phone gave the
+   file underneath it (shown so you can tell one photo from another, never used
+   as the comment). .shot-x is reused for the remove button. */
+.cap-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0 0; }
+.cap-list:empty { margin: 0; }
+.cap-row { display: flex; align-items: center; gap: 10px; position: relative; }
+.cap-thumb { flex: 0 0 auto; width: 56px; height: 56px; display: flex;
+  align-items: center; justify-content: center; border: 1px solid var(--line);
+  border-radius: 8px; overflow: hidden; background: var(--panel-2, #f8fafc); }
+.cap-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cap-icon { font-size: 22px; }
+.cap-fields { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.cap-fields input { width: 100%; }
+.cap-fields .small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cap-row .shot-x { position: static; flex: 0 0 auto; }
+
+/* --- Export format picker (CSV / Excel / PDF) -------------------------- */
+.export-opts { display: flex; flex-direction: column; gap: 10px; }
+.export-opts .exp-opt {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  text-align: start; padding: 12px 14px; font-weight: 600;
+}
+.export-opts .exp-ic { font-size: 22px; line-height: 1; }
+
+/* --- Finance & Costs (owner) ------------------------------------------ */
+.fin-head-btns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.fin-head-btns select { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); }
+.fin-filters { display: flex; gap: 8px; align-items: center; }
+.fin-months td.num, .fin-months th.num,
+.cat-table td.num,
+#fin-recurring td.num, #fin-recurring th.num,
+#fin-ledger td.num, #fin-ledger th.num { text-align: end; white-space: nowrap; }
+.fin-months { margin-top: 14px; }
+.fin-months tfoot th { font-weight: 800; }
+.num.pos { color: #16a34a; }   /* the profit line, in the chart's green */
+.num.neg { color: var(--red); }
+/* A stopped standing order stays on the list, greyed, so last year's totals
+   can still be traced back to the bill that produced them. */
+tr.row-off { opacity: .55; }
+.cat-table td { padding: 6px 8px; vertical-align: middle; }
+.cat-bar { width: 45%; }
+.cat-bar span { display: block; height: 10px; border-radius: 6px; min-width: 2px; }
+.fin-total td, .fin-total th { font-weight: 800; border-top: 2px solid var(--line); }
+.fin-clients td.num, .fin-clients th.num { text-align: end; white-space: nowrap; }
+.fin-clients tbody tr { cursor: pointer; }
+.fin-clients tbody tr:hover { background: var(--bg); }
+
+/* Budget vs actual: the bar fills toward the allowance, and says so in colour
+   before the number has to be read. */
+.fin-budget td.num, .fin-budget th.num { text-align: end; white-space: nowrap; }
+.bud-bar { height: 9px; border-radius: 6px; background: #e6edf3; overflow: hidden; min-width: 90px; }
+.bud-bar span { display: block; height: 100%; border-radius: 6px; background: #16a34a; }
+.bud-bar.near span { background: var(--amber); }
+.bud-bar.over span { background: var(--red); }
+.bud-form { width: 100%; }
+.bud-form td, .bud-form th { padding: 5px 8px; }
+.bud-form .bud-amount { width: 120px; padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 8px; }
+.bud-form .bud-period { padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 8px; }
+
+/* Cash flow forecast: a warning line, four figures, then the weeks. */
+.cf-warn { background: var(--red-l); color: var(--red); padding: 9px 13px; border-radius: 10px;
+           font-weight: 700; margin-bottom: 12px; }
+.cf-ok { background: #dcfce7; color: #15803d; padding: 9px 13px; border-radius: 10px;
+         font-weight: 600; margin-bottom: 12px; }
+.cf-kpis { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.cf-kpis > div { flex: 1 1 150px; background: #f8fafc; border: 1px solid var(--line);
+                 border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.cf-kpis .l { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+.cf-kpis .v { font-size: 17px; font-weight: 800; }
+.fin-cf td.num, .fin-cf th.num { text-align: end; white-space: nowrap; }
+.fin-cf th { font-size: 12px; }
+
+/* Foot of the visit page: the one button that ends the visit. It lives outside
+   the report panel on purpose — an agent finishes the visit, not a form. */
+.visit-save-bar {
+  position: sticky; bottom: 0; z-index: 20; margin-top: 14px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap; padding: 12px 16px; border: 1px solid var(--line);
+  border-radius: 14px; background: #fff; box-shadow: 0 -6px 20px rgba(15,23,42,.08);
+}
+.visit-save-bar .vsb-note { display: flex; flex-direction: column; gap: 2px; }
+.visit-save-bar .btn { min-width: 160px; }
+
+/* Repeating dates in the new-visit form. */
+.vf-dates { display: flex; flex-direction: column; gap: 8px; }
+.vf-date-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+               padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: #f8fafc; }
+.vf-date-row input, .vf-date-row select { padding: 7px 9px; border: 1.5px solid var(--line); border-radius: 8px; }
+.vf-date-row .vf-time { width: 84px; }
+.vf-date-row .vf-rm { margin-inline-start: auto; }
+.vf-preview { font-size: 12px; color: var(--muted); }
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; white-space: nowrap; }
+
+/* ---- in-app document viewer ----
+   A phone and the APK have no PDF reader, so uploaded files open inside a modal
+   instead of a new tab (see openFileViewer in app.js). On a phone the modal is
+   already a full-screen sheet with its own scroll; on desktop/tablet cap the
+   height so a long manual scrolls inside the dialog rather than off the screen. */
+.fileview { max-height: 72vh; overflow: auto; -webkit-overflow-scrolling: touch;
+            background: #f1f5f9; border-radius: 10px; }
+.fileview img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.fileview-msg { padding: 26px 18px; text-align: center; }
+.fileview-msg p { margin: 0 0 6px; }
+.pdfview { padding: 6px; }
+.pdfpage { margin-bottom: 12px; }
+.pdfpage canvas { display: block; border-radius: 6px; box-shadow: var(--shadow); background: #fff; }
+.pdfpage-n { text-align: center; padding: 4px 0 0; }
+/* The sheet gives the viewer the whole screen: no inner cap, no side padding
+   stealing width from the page image. */
+html.pc-phone .modal-body.modal-flush { padding: 0; }
+html.pc-phone .fileview { max-height: none; border-radius: 0; min-height: 100%; }
+
+/* ---- calendar view switch (month | one day) ----
+   The month grid is a 620px-wide scroller on a phone; the day view is the way
+   to read a single day there without dragging sideways. */
+.cal-modes { display: inline-flex; gap: 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.cal-modes .btn { border-radius: 0; border: none; box-shadow: none; }
+/* A date opens its own day, so it has to look tappable. */
+.cal-day[data-calday] { cursor: pointer; display: inline-block; padding: 1px 5px; border-radius: 6px; }
+.cal-day[data-calday]:hover { background: var(--green-l); color: var(--ink); }
+html.pc-phone .cal-day[data-calday] { padding: 3px 8px; }
+
+/* New web code is waiting: ↻ reloads the app rather than re-fetching the screen,
+   so it says so. */
+#nav-refresh.has-update { position: relative; }
+#nav-refresh.has-update::after {
+  content: ""; position: absolute; top: 3px; inset-inline-end: 3px;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 0 2px #fff;
+}
+
+/* Report condition / recommendation pick lists. Tick boxes rather than a
+   dropdown: on a phone one tap each beats opening a menu per choice, and
+   several choices per report is the normal case. */
+.opt-picks { display: flex; flex-direction: column; gap: 2px; border: 1px solid #e3e8ec;
+  border-radius: 10px; padding: 8px 10px; max-height: 260px; overflow-y: auto; background: #fff; }
+/* Specificity matters here: these rows are <label>s inside a .field, and
+   `.field label` (and its phone override) style them as FIELD CAPTIONS —
+   display:block, bold, with a margin under each. That is why every choice sat
+   on its own line with the words wrapped underneath the tick box and a gap
+   below, and why a list of fifty was a screen and a half of scrolling. Three
+   classes beat both of those rules. */
+.opt-pick { padding: 7px 4px; cursor: pointer; border-radius: 8px; }
+.field .opt-picks .opt-pick { display: flex; align-items: flex-start; gap: 9px;
+  margin: 0; font-weight: 400; font-size: 13.5px; line-height: 1.35; color: var(--ink); }
+.field .opt-picks .opt-pick > span { flex: 1 1 auto; min-width: 0; }
+.opt-pick:hover { background: #f6f9fc; }
+.opt-pick input { margin-top: 3px; flex: 0 0 auto; width: 17px; height: 17px; }
+.opt-legacy { margin-top: 6px; padding: 8px 10px; border-radius: 8px; background: #f6f9fc;
+  color: #475569; font-size: 13px; }
+/* The one tick on the Clear screen that reaches past the dates on show. It is
+   meant to look nothing like the others — see clear_everything. */
+.danger-pick { margin-top: 6px; border: 1px solid #fecaca; background: #fef2f2;
+  color: #991b1b; font-weight: 600; padding: 9px 10px; }
+.danger-pick:hover { background: #fee2e2; }
+/* THE PICK LISTS ON A PHONE. There are fifty conditions and fifty
+   recommendations in the live book, and every one of them was drawn full
+   height, one under the other, with the list free to grow as tall as it liked —
+   so writing a report meant scrolling through a hundred rows to reach the
+   Save button. Now each list is a box of its own that scrolls INSIDE the form
+   (about half the screen), and the rows are tight: a 17px box and one line of
+   text, ~32px a row instead of ~46, still a comfortable finger target because
+   the whole row is the label. Applies inside the APK on any layout — a WebView
+   that never measured itself as a phone has the same problem. */
+html.pc-phone .opt-picks, html.pc-app .opt-picks {
+  max-height: 46vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  gap: 0; padding: 4px 8px;
+}
+html.pc-phone .opt-pick, html.pc-app .opt-pick { padding: 5px 4px; border-radius: 6px; }
+html.pc-phone .field .opt-picks .opt-pick,
+html.pc-app .field .opt-picks .opt-pick { font-size: 13.5px; line-height: 1.3; }
+html.pc-phone .opt-pick input, html.pc-app .opt-pick input { margin-top: 2px; }
+@media (pointer: coarse) {
+  .opt-picks { max-height: 46vh; overflow-y: auto; gap: 0; padding: 4px 8px; }
+  .opt-pick { padding: 5px 4px; }
+  .field .opt-picks .opt-pick { font-size: 13.5px; line-height: 1.3; }
+  .opt-pick input { margin-top: 2px; }
+}
+
+/* TIGHTER STILL INSIDE THE APK (2026-09-06, his instruction). The app lays the
+   CRM out wide and zooms it down, so a row that reads comfortably in a browser
+   is a band of empty space on the tablet — with fifty conditions and fifty
+   recommendations, the gaps alone were most of what he was scrolling past.
+   Inside the APK a row is the tick box and its line of text and almost nothing
+   else: ~19px instead of ~28, so half again as many choices fit in the same
+   box. The whole row is still the label, so it stays a tap target. Web and
+   phone-browser spacing is untouched — this is .pc-app only, as he asked. */
+html.pc-app .opt-picks { gap: 0; padding: 3px 8px; }
+html.pc-app .opt-pick { padding: 2px 4px; border-radius: 5px; }
+html.pc-app .field .opt-picks .opt-pick {
+  font-size: 13.5px; line-height: 1.25; gap: 7px;
+}
+/* AND THE TICK BOX ITSELF. On the phone layout `html.pc-phone .field input`
+   catches these checkboxes and gives every one of them a text field's size —
+   46px tall with 12px of padding — so a single-line choice was drawn 61px high.
+   That, not the gaps, was most of the space he was scrolling past. Named with
+   enough classes to beat that rule, and only inside the app. */
+html.pc-app .field .opt-picks .opt-pick input {
+  margin-top: 1px; padding: 0; min-height: 0; width: 16px; height: 16px;
+  border-radius: 4px; flex: 0 0 auto;
+}
+/* The scan screens draw their multi-choice fields from the same box. */
+html.pc-app .opt-picks.scan-multi { padding: 3px 8px; }
+
+/* Areas on the dispatch board: who covers where, and the jobs that fall
+   outside it. A flag, not a barrier — the drop is still allowed. */
+.dp-area { font-size: 11px; font-weight: 700; color: #0f766e; background: #ecfdf5;
+  border-radius: 999px; padding: 2px 9px; }
+.dp-card-area { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.dp-card-area.dp-off-area { color: #b45309; font-weight: 700; }
+.dp-card.dp-off { border-inline-start: 3px solid #f59e0b; }
+
+/* TEAM LEADERS. The patch a leader answers for, shown wherever their screens
+   need to say "this, and no further" — the dashboard, My Team, and the amber
+   variant for a leader nobody has given an area to yet. */
+.lead-areas { margin: 0 0 14px; padding: 9px 13px; border-radius: 10px; background: #ecfdf5;
+  color: #0f766e; font-weight: 600; font-size: 13.5px; }
+.lead-areas.warn-line { background: #fffbeb; color: #b45309; }
+/* Multi-select of areas in the user form: checkboxes, not a multiple <select>,
+   which is unusable on a phone and hides what is ticked. */
+.chk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 4px;
+  border: 1px solid #e3e8ec; border-radius: 10px; padding: 9px 11px; background: #fff;
+  max-height: 220px; overflow-y: auto; }
+.chk-item { display: flex; align-items: center; gap: 8px; padding: 5px 3px; cursor: pointer;
+  line-height: 1.4; }
+.chk-item:hover { background: #f6f9fc; border-radius: 8px; }
+.chk-item input { width: 17px; height: 17px; flex: 0 0 auto; }
+html.pc-phone .chk-grid { grid-template-columns: 1fr; max-height: none; }
+html.pc-phone .chk-item { padding: 9px 3px; }
+
+/* FILLING AN AREA FROM ITS OWN ROW. One line per branch — name, company, and
+   the area it is in NOW — because the question being answered is "where is
+   this one today", and 179 of them have to be scannable. Single column: a
+   two-column grid of long branch names wraps into mush. */
+.ab-list { grid-template-columns: 1fr; max-height: 46vh; }
+.ab-row { justify-content: flex-start; gap: 10px; }
+.ab-row .ab-name { display: flex; flex-direction: column; min-width: 0; flex: 1 1 auto; }
+.ab-row .ab-name strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ab-tags { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; margin-inline-start: auto; }
+.ab-here { font-size: 11px; font-weight: 700; color: #166534; background: #dcfce7;
+  border-radius: 999px; padding: 2px 9px; }
+.ab-booked { font-size: 12px; font-weight: 600; color: #b45309; background: #fffbeb;
+  border-radius: 8px; padding: 6px 10px; margin-top: 6px; line-height: 1.45; }
+.ab-sum { margin: 10px 2px 0; }
+.ab-sum-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ab-delta { color: var(--green-d); font-size: 13px; }
+#ab .toolbar { margin: 0 0 10px; }
+html.pc-phone .ab-list { max-height: none; }
+html.pc-phone .ab-tags { margin-inline-start: 0; }
+
+/* The roster seen from the areas' side. An area with nobody on it is the whole
+   point of the screen, so an empty day is tinted rather than left blank. */
+.ar-cell { vertical-align: top; }
+.ar-empty { background: #fffbeb; }
+.ar-who { display: inline-block; background: #ecfdf5; color: #0f766e; border-radius: 999px;
+  padding: 2px 9px; margin: 2px 3px 2px 0; font-size: 11.5px; font-weight: 700; }
+tr.ar-loose td { background: #f8fafc; }
+/* Gaps that stop work reaching a patch: a company with no branch, a branch with
+   no area. Amber, because it is a setup task rather than a fault. */
+.loc-gaps { background: #fffbeb; border-color: #fde68a; }
+.loc-gaps .btn { margin: 0 6px 0 0; }
+
+/* AVAILABILITY — the whole team on one grid. A worked day is tinted so the
+   week reads at a glance, and the hours only appear once the day is ticked:
+   most days here have no fixed times, and empty boxes would say otherwise. */
+.av-table { width: 100%; }
+.av-table th { white-space: nowrap; }
+.av-table td { vertical-align: top; }
+.av-day { min-width: 118px; }
+.av-day.av-on { background: #ecfdf5; }
+.av-hours { display: flex; gap: 4px; margin-top: 5px; }
+.av-hours input { width: 100%; min-width: 0; padding: 4px 6px; font-size: 12.5px; text-align: center; }
+.av-areas { margin-top: 8px; }
+.av-areas .chk-grid { max-height: 150px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+html.pc-phone .av-day { min-width: 96px; }
+html.pc-phone .av-areas .chk-grid { max-height: none; }
+
+/* The plan the one button proposes, before anybody agrees to it. The counts
+   lead, and the amber one — work that could not be placed — is the number
+   that means hire somebody or widen a window. */
+.auto-summary { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0 10px; }
+.sc-chip { background: #ecfdf5; color: #0f766e; border-radius: 999px; padding: 4px 12px;
+  font-size: 12.5px; font-weight: 700; }
+.sc-chip.warn { background: #fffbeb; color: #b45309; }
+.ar-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 3px 0;
+  line-height: 1.5; }
+
+/* WHEN A BRANCH OPENS ITS DOORS. The mirror of the availability board, but for
+   the customer's side of the appointment: tick the days, and type hours only
+   for the day that differs from the branch's usual window. */
+.sd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 5px;
+  border: 1px solid #e3e8ec; border-radius: 10px; padding: 9px 11px; background: #fff; }
+.sd-day { display: block; padding: 6px 7px; border-radius: 8px; cursor: pointer; line-height: 1.4; }
+.sd-day:hover { background: #f6f9fc; }
+.sd-day.sd-on { background: #ecfdf5; }
+.sd-tick { display: flex; align-items: center; gap: 7px; }
+.sd-tick input { width: 17px; height: 17px; flex: 0 0 auto; }
+.sd-hours { display: flex; gap: 4px; margin-top: 5px; }
+.sd-hours input { width: 100%; min-width: 0; padding: 4px 6px; font-size: 12.5px; text-align: center; }
+html.pc-phone .sd-grid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); }
+
+/* The same fact read back on the Locations list, where the office looks at the
+   whole book at once. A day carrying its own hours is starred — the exception
+   is what wants spotting, not the rule. */
+.sd-chips { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px; }
+.sd-chip { font-size: 11px; font-weight: 700; color: #475569; background: #f1f5f9;
+  border-radius: 999px; padding: 1px 8px; }
+.sd-chip.sd-chip-own { color: #0f766e; background: #ecfdf5; }
+/* The night shift (22:00–02:00): the window is real, but only its hours before
+   midnight land on the day the visit is due. */
+.sd-night { cursor: help; }
+/* A round that ends after midnight. Small, but it is the difference between
+   "22:00–01:30" read as three and a half hours and read as minus twenty. */
+.next-day { font-size: 11px; font-weight: 700; color: #4a52b8; background: #eef0fd;
+  border-radius: 999px; padding: 1px 7px; margin-inline-start: 4px; }
+
+/* BACKUP & RESTORE. The taking half is ordinary; the restoring half replaces
+   the whole business and is dressed to say so — red rail, red button, and a
+   word to type before it will move. */
+.bk-panel h3, .bk-danger h3 { margin: 0 0 10px; font-size: 16px; }
+.bk-opt { align-items: flex-start; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); }
+.bk-opt:first-of-type { border-top: 0; }
+.bk-opt .small { display: block; margin-top: 2px; }
+.bk-sub { margin: 2px 0 6px; padding-inline-start: 28px; display: grid; gap: 4px; }
+/* The parts checklist. Two columns on a desk, one on a phone — a dozen choices
+   in a single column is a scroll, and the point is to see them all at once. */
+.bk-parts { margin: 2px 0 8px; padding-inline-start: 28px; display: grid; gap: 4px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.bk-parts .chk-item { align-items: baseline; }
+.bk-parts .small { display: block; }
+.bk-parts-all { grid-column: 1 / -1; margin-top: 4px; }
+html.pc-phone .bk-parts { grid-template-columns: 1fr; }
+.bk-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.bk-ready { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;
+  border-radius: 10px; padding: 10px 13px; margin-top: 10px; font-size: 13.5px; }
+.bk-danger { border-inline-start: 3px solid #dc2626; }
+.bk-danger p { font-size: 13.5px; color: var(--muted); }
+.bk-restore { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 8px; }
+.bk-confirm { max-width: 190px; letter-spacing: .08em; font-weight: 700; }
+.bk-bar { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden;
+  margin: 12px 0 6px; }
+.bk-bar span { display: block; height: 100%; background: linear-gradient(90deg, #f59e0b, #dc2626); }
+html.pc-phone .bk-restore { flex-direction: column; align-items: stretch; }
+html.pc-phone .bk-confirm { max-width: none; }
+
+/* Branches the plan could not fully serve. Not a failure of the planner — a
+   customer asking for more visits than the days they will open, which only the
+   office can settle. */
+.auto-capped { background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px;
+  padding: 10px 13px; margin: 12px 0 4px; color: #92400e; }
+.auto-capped ul { margin: 6px 0 0; padding-inline-start: 20px; }
+.auto-capped li { font-size: 12.5px; line-height: 1.6; }
+
+/* A round the planner had to bend to keep a customer's visit. NOT a warning
+   colour — the visit was saved, which is what the office asked for; it is
+   information, and the office decides whether the longer day is worth it. */
+.auto-bent { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
+  padding: 10px 13px; margin: 12px 0 4px; color: #1e40af; }
+.auto-bent ul { margin: 6px 0 0; padding-inline-start: 20px; }
+.auto-bent li { font-size: 12.5px; line-height: 1.6; }
+
+/* The way back from one press of the button. Deliberately sits above the
+   roster grid, not buried in a menu: the moment somebody wants to undo an
+   applied plan is the moment right after applying it. */
+.run-strip { border-inline-start: 3px solid #0f766e; }
+.run-row { display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  flex-wrap: wrap; padding: 6px 0; border-top: 1px solid var(--line); margin-top: 6px; }
+.run-row:first-of-type { border-top: 0; }
+.run-row.run-new { background: #ecfdf5; border-radius: 8px; padding-inline: 8px; }
+html.pc-phone .run-row { align-items: flex-start; flex-direction: column; }
+
+/* MISSING OWED VISITS. A branch below the number its cycle owes for the month,
+   because a visit was deleted by hand and never replaced. Amber, not the
+   teal of the undo strip: this one is asking for something to be done. */
+.gap-strip { border-inline-start-color: #b45309;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.gap-count { display: block; font-size: 12.5px; font-weight: 600; color: #9a3412; }
+.bs-gap { display: inline-block; margin-inline-start: 4px; font-size: 12px;
+  font-weight: 700; color: #9a3412; white-space: nowrap; cursor: help; }
+
+/* THE BRANCH SCHEDULE BOARD. Same bones as the availability board — the office
+   reads one screen and saves once — but with ~150 rows instead of 14, so the
+   day cells stay narrow and the table scrolls in its own box. */
+/* The board scrolls in ITS OWN box now. It used to overflow the panel and take
+   the whole page sideways with it, so the only scrollbar was the window's —
+   parked under two hundred rows, which is why Thursday and Friday felt out of
+   reach. Rail on top, table below, same scroll position. */
+.bs-wrap { padding-top: 12px; }
+/* Tall enough for a real scrollbar to be drawn in: at content height the bar
+   had nowhere to render and the rail was a 1px line nobody could grab. */
+.bs-rail { overflow-x: auto; overflow-y: hidden; height: 14px; }
+.bs-rail-inner { height: 1px; }
+
+.bs-rail::-webkit-scrollbar, .bs-wrap .table-scroll::-webkit-scrollbar { height: 12px; }
+.bs-rail::-webkit-scrollbar-thumb, .bs-wrap .table-scroll::-webkit-scrollbar-thumb {
+  background: #c7d2de; border-radius: 999px; border: 3px solid #fff; }
+.bs-rail::-webkit-scrollbar-thumb:hover,
+.bs-wrap .table-scroll::-webkit-scrollbar-thumb:hover { background: #a9b8c9; }
+.bs-hint { margin-top: 8px; }
+
+/* Anything carrying an UPLOADED document's own words. Chrome and the phone's
+   WebView translate whatever text they can reach on a page; a manual, a licence
+   or a safety sheet must read exactly as it was written, whatever language that
+   is. (The PDF pages themselves are drawn on a canvas and were never at risk —
+   this is for the name, the description and the fallback text around them.) */
+.notranslate { unicode-bidi: plaintext; }
+.bs-table { width: 100%; }
+/* THE BRANCH NAME STAYS PUT. Halfway across a 1600px table every row looks the
+   same; frozen, the name is always the thing you are editing against. The
+   shadow only appears once there is something hidden behind it. */
+.bs-table th:first-child, .bs-table td:first-child {
+  position: sticky; inset-inline-start: 0; z-index: 2; background: #fff; }
+.bs-table thead th:first-child { z-index: 3; background: #f8fafc; }
+.bs-scrolled .bs-table th:first-child, .bs-scrolled .bs-table td:first-child {
+  /* only once something is actually hidden behind it */
+  box-shadow: 6px 0 8px -6px rgba(15, 23, 42, .28); }
+[dir="rtl"] .bs-scrolled .bs-table th:first-child,
+[dir="rtl"] .bs-scrolled .bs-table td:first-child {
+  box-shadow: -6px 0 8px -6px rgba(15, 23, 42, .28); }
+.bs-table th { white-space: nowrap; }
+.bs-table td { vertical-align: top; }
+.bs-table input[type=text], .bs-table input[type=number], .bs-table select {
+  width: 100%; min-width: 0; padding: 4px 6px; font-size: 12.5px; }
+.bs-table td:first-child { min-width: 160px; }
+/* The AREA column. Its select is width:100% with min-width:0 so the day cells
+   keep their room — which let the column collapse to a sliver, and the office
+   could not read which area a branch was in without opening the dropdown. The
+   column gets a floor wide enough for a real area name in either language. */
+.bs-table th:nth-child(2), .bs-table td:nth-child(2) { min-width: 200px; }
+.bs-table .bs-area { min-width: 180px; }
+/* The two window columns need to show HH:MM without clipping either. */
+.bs-table th:nth-child(3), .bs-table td:nth-child(3),
+.bs-table th:nth-child(4), .bs-table td:nth-child(4) { min-width: 86px; }
+/* HOW OFTEN: a number and the unit it is counted in, side by side. The office
+   reads some branches in weeks and some in months, and the unit has to be
+   visible on the row rather than remembered — a "2" that could mean either is
+   the ambiguity this pair exists to remove. Wide enough for "per month" in
+   both languages. */
+.freq-pair { display: flex; gap: 4px; align-items: center; }
+.freq-pair input[type=number] { flex: 0 0 52px; text-align: center; }
+.freq-pair select { flex: 1 1 auto; }
+.bs-table th:nth-child(5), .bs-table td:nth-child(5) { min-width: 150px; }
+html.pc-phone .bs-table th:nth-child(5),
+html.pc-phone .bs-table td:nth-child(5) { min-width: 132px; }
+.bs-day { min-width: 104px; }
+.bs-day.bs-on { background: #ecfdf5; }
+.bs-hours { display: flex; gap: 4px; margin-top: 4px; }
+.bs-hours input { text-align: center; }
+html.pc-phone .bs-day { min-width: 92px; }
+html.pc-phone .bs-table th:nth-child(2), html.pc-phone .bs-table td:nth-child(2) { min-width: 150px; }
+html.pc-phone .bs-table .bs-area { min-width: 138px; }
+
+/* Work the plan could not book, grouped by what to do about it. Sits above the
+   day-by-day table because the office needs to decide whether to accept the
+   plan BEFORE reading it. */
+.auto-unplaced { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px;
+  padding: 10px 13px; margin: 10px 0; color: #9a3412; }
+.un-group { margin-top: 8px; }
+.un-why { font-size: 12.5px; font-weight: 700; line-height: 1.5; }
+.auto-unplaced .muted { color: #b45309; }
+
+/* THE SAME WORK, ONCE THE PLAN HAS BEEN APPLIED — the preview's amber block is
+   a warning, this is a worklist somebody actually clears. A line that has been
+   dealt with stays on the list, greyed: the office wants to see the shortfall
+   shrinking, not rows disappearing under their hands. */
+.btn.warn { background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 4px 12px rgba(217,119,6,.25); }
+.up-group { margin-top: 14px; }
+.up-why { font-size: 12.5px; font-weight: 700; color: #9a3412; background: #fff7ed;
+  border: 1px solid #fed7aa; border-radius: 8px; padding: 7px 10px; line-height: 1.5; }
+.up-row { display: flex; align-items: center; gap: 12px; padding: 9px 4px;
+  border-bottom: 1px solid var(--line); }
+.up-row:last-child { border-bottom: 0; }
+.up-when { font-size: 12.5px; font-weight: 700; color: var(--muted); min-width: 92px; }
+.up-what { flex: 1; min-width: 0; }
+.up-branch { display: block; font-weight: 600; font-size: 13.5px; }
+.up-what .small { display: block; }
+.up-act { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.up-tag { font-size: 12px; font-weight: 700; color: var(--muted); }
+.up-tag.ok { color: #0f766e; }
+.up-done { opacity: .55; }
+html.pc-phone .up-row { flex-wrap: wrap; }
+html.pc-phone .up-when { min-width: 0; }
+
+/* Can the book be serviced? Read while the office is still typing it. */
+.cap-panel { border-inline-start: 3px solid #0f766e; }
+.cap-head { display: flex; justify-content: space-between; align-items: baseline;
+  gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.cap-row { display: flex; align-items: center; gap: 10px; padding: 3px 0; flex-wrap: wrap; }
+.cap-name { min-width: 130px; font-weight: 700; font-size: 12.5px; }
+.cap-bar { flex: 1; min-width: 120px; height: 9px; background: #eef2f6;
+  border-radius: 999px; overflow: hidden; }
+.cap-bar i { display: block; height: 100%; }
+.cap-ok { background: #16a34a; } .cap-tight { background: #f59e0b; } .cap-over { background: #dc2626; }
+html.pc-phone .cap-name { min-width: 100%; }
+
+/* The answer to the customer's first question, stated rather than implied. */
+.next-visit { background: #ecfdf5; border: 1px solid #a7f3d0; color: #0f766e;
+  border-radius: 10px; padding: 9px 13px; margin-bottom: 10px; font-weight: 700; }
+
+/* THE PIPELINE BOARD. Grouped in the order work flows, so a stall reads as a
+   place in the chain rather than a number on its own. */
+.pipe-group { margin-bottom: 16px; }
+.pipe-group h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--muted); margin: 0 0 7px; }
+.pipe-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 9px; }
+.pipe-card { display: flex; flex-direction: column; gap: 3px; align-items: flex-start;
+  background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  cursor: pointer; text-align: start; font: inherit; }
+.pipe-card:hover { border-color: #94a3b8; }
+.pipe-n { font-size: 24px; font-weight: 800; line-height: 1; color: #64748b; }
+.pipe-lbl { font-size: 12.5px; color: var(--muted); line-height: 1.35; }
+.pipe-card.pipe-stuck { background: #fffbeb; border-color: #fde68a; }
+.pipe-card.pipe-stuck .pipe-n { color: #b45309; }
+
+/* MARKETING TARGETS. The commission on a contract is money a real person is
+   counting on, so the row that has stopped earning is drawn as stopped —
+   greyed, with what it would still be paying spelled out beside it. */
+.mkt-rate { font-size: 13px; color: var(--muted); }
+.mkt-bar { display: inline-block; width: 110px; height: 8px; border-radius: 6px;
+  background: #e6edf3; overflow: hidden; vertical-align: middle; margin-inline-end: 6px; }
+.mkt-bar i { display: block; height: 100%; border-radius: 6px; }
+.mkt-bar i.mkt-on { background: linear-gradient(90deg, var(--cyan), var(--green)); }
+.mkt-bar i.mkt-near { background: #f59e0b; }
+.mkt-bar i.mkt-off { background: #94a3b8; }
+.mkt-up { color: var(--green); font-weight: 700; font-size: 12px; }
+tr.mkt-dead td { opacity: .62; }
+.mkt-target-panel .mkt-bar { width: 100%; height: 12px; }
+.mkt-target-head { display: flex; justify-content: space-between; align-items: baseline;
+  gap: 10px; flex-wrap: wrap; margin-bottom: 7px; }
+.b-paused { background: var(--amber-l); color: var(--amber); }
+.b-ended { background: var(--red-l); color: var(--red); }
+
+/* THE AVAILABILITY BOARD'S AREAS, GROUPED BY ZONE. Twenty-eight loose ticks
+   per engineer is what made this board a chore; the zone heading gives the
+   office one gesture for a whole side of the city, and a rule between groups
+   so the eye can find the one it wants. */
+.av-zonegrp { border-top: 1px solid var(--line, #e2e8f0); padding-top: 4px; margin-top: 4px; }
+.av-zonegrp:first-child { border-top: 0; margin-top: 0; }
+.av-zonehead { margin-bottom: 2px; }
+.av-zonehead strong { font-size: 12.5px; }
+/* WHICH DAYS HE WORKS A PATCH — the exception, not the rule, so it is small,
+   indented under its area, and only shown once the area is ticked. */
+.av-areaitem { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.av-areadays { display: inline-flex; flex-wrap: wrap; gap: 2px; margin-inline-start: 18px; }
+.av-areadays label {
+  display: inline-flex; align-items: center; gap: 1px;
+  font-size: 10.5px; color: var(--muted, #64748b); white-space: nowrap;
+}
+.av-areadays input { width: 11px; height: 11px; margin: 0; }
+
+
+/* FIXED POSTS ON THE ROSTER. Hours already sold to one site — never a visit,
+   so they read as their own kind of line and are never counted among them. */
+.ar-post { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap;
+  padding: 3px 0; }
+.badge.b-post { background: rgba(13,116,128,.14); color: #0a5a64; border: 1px solid rgba(13,116,128,.35); }
+.badge.b-danger { background: rgba(168,50,44,.12); color: #a8322c; border: 1px solid rgba(168,50,44,.45); }
+.ar-uncovered { background: rgba(168,50,44,.07); border-radius: 4px; padding: 3px 6px; }
+.auto-uncovered { border-left: 3px solid #a8322c; }
+.sc-chip.danger { background: rgba(168,50,44,.12); color: #a8322c; }
+@media (prefers-color-scheme: dark) {
+  .badge.b-post { background: rgba(63,195,209,.16); color: #7fd9e3; border-color: rgba(63,195,209,.4); }
+  .badge.b-danger { background: rgba(239,125,120,.16); color: #ef7d78; border-color: rgba(239,125,120,.45); }
+  .ar-uncovered { background: rgba(239,125,120,.10); }
+  .sc-chip.danger { background: rgba(239,125,120,.16); color: #ef7d78; }
+}
+
+/* THE MENU HE CUT DOWN. Anything he moved is under "More" — still one click
+   away, because a menu you cannot get back from is a lost feature. */
+.nav-more { margin-top: 2px; }
+.nav-more > summary { list-style: none; cursor: pointer; padding: 9px 14px;
+  color: var(--muted, #7a8a90); font-size: 13px; user-select: none; }
+.nav-more > summary::-webkit-details-marker { display: none; }
+.nav-more > summary::before { content: "▸"; display: inline-block; width: 12px;
+  transition: transform .12s ease; }
+.nav-more[open] > summary::before { transform: rotate(90deg); }
+.nav-more > summary .n { opacity: .6; font-size: 11px; }
+.nav-more .nav-item { padding-left: 26px; }
+.nav-customise { margin-top: 6px; opacity: .75; font-size: 13px; }
+.nav-customise:hover { opacity: 1; }
+
+/* ---- WHO CAN TAKE THIS VISIT ------------------------------------------- */
+/* Opened under the branch it is about, in the worklist, and as a dialog from
+   the plan preview. Read top to bottom: the man, why he is a good idea, the
+   gap, and the call either side of it with how far away that is. */
+.un-names { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.un-branch {
+  border: 1px solid #e3e8ec; background: #fff; border-radius: 999px;
+  padding: 4px 11px; font: inherit; font-size: 12.5px; color: var(--ink);
+  cursor: pointer; text-align: start;
+}
+.un-branch:hover { background: #f6f9fc; border-color: #cbd5e1; }
+.un-branch.open { background: var(--green-l, #ecfdf5); border-color: #99f6e4; font-weight: 600; }
+.up-who { margin: 0 0 10px; padding: 10px 12px; border-radius: 10px;
+  background: #f8fafc; border: 1px solid #e3e8ec; }
+.wct-men { display: flex; flex-direction: column; gap: 8px; }
+.wct-man { background: #fff; border: 1px solid #e3e8ec; border-radius: 10px; padding: 9px 11px; }
+.wct-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.wct-why { font-size: 12px; font-weight: 600; color: #0f766e; background: #ecfdf5;
+  border-radius: 999px; padding: 2px 9px; }
+.wct-km { font-size: 12px; color: var(--muted); }
+.wct-slot { font-weight: 600; font-size: 13.5px; margin: 4px 0 2px; }
+.wct-side { font-size: 12.5px; color: #475569; }
+.wct-act { margin-top: 7px; }
+.wct-note { padding: 8px 10px; border-radius: 8px; background: #fffbeb; font-size: 13px; }
+.wct-blocked { margin-top: 8px; font-size: 12.5px; }
+.wct-blocked summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+.wct-no { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0;
+  border-bottom: 1px solid #eef2f6; }
+/* On a phone the two halves of a "why not" line stack rather than squeeze. */
+html.pc-phone .wct-no, html.pc-app .wct-no { flex-direction: column; gap: 0; }
+
+/* ---- branches the book asks too much of -------------------------------- */
+/* Every one of these is fixed in the branch's own record, so the row reads as
+   a note to the office: what it asks, what fits, and the number to type. */
+.oa-row { border: 1px solid #e3e8ec; border-radius: 10px; padding: 10px 12px;
+  margin-bottom: 8px; background: #fff; }
+.oa-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.oa-why { font-size: 13.5px; color: #b45309; margin: 5px 0 2px; }
+.oa-fix { font-size: 13px; color: #0f766e; margin-bottom: 4px; }
+.oa-act { margin-top: 7px; }

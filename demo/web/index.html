@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PestCare CRM</title>
+  <!-- The Android app's WebView injects window.PestPrint before the page runs;
+       tag the document so CSS/JS can adapt only inside the app (never on web). -->
+  <script>if (window.PestPrint) document.documentElement.classList.add("pc-app");
+    // Catch the install offer HERE, before app.js has even parsed — Chrome can
+    // fire beforeinstallprompt very early, and a listener added later just
+    // misses it (the event does not replay). app.js picks this up.
+    window.__pcInstallEvt = null;
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault(); window.__pcInstallEvt = e;
+      window.dispatchEvent(new Event("pc-installable"));
+    });
+    // Width the CRM is laid out at when a TABLET runs the Android app: too wide
+    // for the phone layout, too narrow for a comfortable desktop one, so the
+    // app's fit script lays it out here and zooms it to fit. Phones no longer
+    // use it at all — see below. Read by the app, so it is retunable from the
+    // web with no APK rebuild.
+    window.__pcFitWidth = 900;
+    // Run twice: here (so the layout is decided before a single pixel is
+    // painted) and again just before app.js, because the Android WebView can
+    // still report innerWidth/innerHeight of 0 while the <head> is parsing —
+    // and the old one-shot version simply gave up in that case, dropping the
+    // phone layout and its bottom tab bar for the whole session.
+    window.__pcPhoneCheck = function () {
+      // PHONES GET A REAL PHONE LAYOUT (html.pc-phone in styles.css): laid out
+      // at the device's own width, at normal text size, so nothing has to be
+      // pinched or dragged sideways to be read. This replaces the old trick of
+      // laying the CRM out at 900px and zooming the whole page down — that kept
+      // the desktop layout intact but left an engineer zooming and scrolling in
+      // both directions to fill in one report.
+      //
+      // DESKTOP IS DELIBERATELY UNTOUCHED. The test is `pointer: coarse` plus a
+      // genuinely small screen, so a narrowed laptop window keeps the layout it
+      // was designed for, and a tablet (either app or browser) does too.
+      try {
+        var html = document.documentElement;
+        if (html.classList.contains("pc-phone")) return true;   // already decided
+        var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+        // Fall back through every measure of the screen there is: a WebView
+        // that has not laid out yet answers 0 to innerWidth/innerHeight, and
+        // screen.* is available from the very first line of script.
+        var w = window.innerWidth || html.clientWidth || (window.screen || {}).width || 0;
+        var h = window.innerHeight || html.clientHeight || (window.screen || {}).height || 0;
+        // Rotating must not change the answer, hence the shorter side.
+        var side = Math.min(w, h);
+        if (!(coarse && side > 0 && side < 620)) return false;
+        html.classList.add("pc-phone");
+        // Tell the Android app's injected fit script to stand down: it bails
+        // out when __pcFit is already set, so the phone layout survives inside
+        // the APK WITHOUT shipping a new build. Do not rename this flag.
+        window.__pcFit = true;
+        var m = document.querySelector('meta[name=viewport]');
+        if (m) m.setAttribute("content",
+          "width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=yes");
+        return true;
+      } catch (e) { /* a viewport tweak must never block boot */ }
+      return false;
+    };
+    window.__pcPhoneCheck();</script>
+  <!-- PWA: installable + offline (field agents) -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#1f74d6" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="PestCare" />
+  <link rel="apple-touch-icon" href="/icons/icon-180.png" />
+  <!-- Browser tab icon. Without these the tab fell back to /favicon.ico, which
+       the SPA route answered with index.html, so Chrome showed a blank page
+       icon. Built from the Android launcher's fox head — deploy/make-favicon.py. -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Login screen -->
+  <div id="login-screen" class="login-screen hidden">
+    <div class="login-card">
+      <div class="brand">
+        <img src="/foxsyslogo.png" class="brand-logo" alt="FoxSystems" />
+        <h1 id="login-title">PestCare CRM</h1>
+        <p id="login-tagline" class="muted"></p>
+      </div>
+      <form id="login-form">
+        <label id="lbl-email"></label>
+        <input type="email" id="login-email" value="" required />
+        <label id="lbl-password"></label>
+        <input type="password" id="login-password" value="" required />
+        <div id="login-error" class="error hidden"></div>
+        <button type="submit" id="login-btn" class="btn-primary"></button>
+      </form>
+      <button id="login-lang" class="link-btn"></button>
+      <div class="powered" id="login-powered"></div>
+    </div>
+  </div>
+
+  <!-- App shell -->
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand-sm">
+        <img src="/foxsyslogo.png" class="brand-logo-sm" alt="FoxSystems" />
+        <span id="brand-name"></span>
+      </div>
+      <nav id="nav"></nav>
+      <div class="sidebar-foot">
+        <button id="lang-toggle" class="link-btn"></button>
+        <div class="user-box">
+          <div id="user-name" class="user-name"></div>
+          <div id="user-role" class="muted small"></div>
+        </div>
+        <!-- shown only once the browser offers an install (https + service worker) -->
+        <button id="install-btn" class="link-btn hidden"></button>
+        <button id="logout-btn" class="link-btn danger"></button>
+        <div class="powered-sm" id="sidebar-powered"></div>
+      </div>
+    </aside>
+    <main class="content">
+      <header class="topbar">
+        <button id="nav-toggle" class="icon-btn nav-toggle" title="Menu" aria-label="Toggle menu">☰</button>
+        <!-- Step back through the screens you opened, instead of restarting from
+             the sidebar. Hidden until there is somewhere to go back to. -->
+        <button id="nav-back" class="icon-btn hidden" aria-label="Back">←</button>
+        <button id="nav-refresh" class="icon-btn" aria-label="Refresh">↻</button>
+        <div class="quick-search">
+          <input id="quick-search" placeholder="" />
+        </div>
+        <div id="offline-status" class="offline-status hidden"></div>
+        <div id="topbar-right"></div>
+      </header>
+      <div id="view" class="view"></div>
+    </main>
+    <!-- Phone only (html.pc-phone): the four screens the role actually lives in,
+         plus ☰ for everything else. Built in app.js from the same permission
+         list as the sidebar; invisible on desktop. -->
+    <nav id="tabbar" class="tabbar" aria-label="Main"></nav>
+    <!-- Shown ONLY inside an APK too old to answer PestPrint.appVersion() —
+         1.7 and earlier, the builds that swallow the ☰ corner. The link is an
+         ordinary download: the app's DownloadListener puts the APK in Downloads
+         and Android offers to install it over the top. See app.js. -->
+    <div id="app-update" class="app-update hidden">
+      <span id="app-update-text"></span>
+      <a id="app-update-link" href="/fox-crm.apk"></a>
+      <button id="app-update-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modal-title"></h3>
+        <button id="modal-close" class="icon-btn">✕</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Last chance to spot a phone before app.js reads html.pc-phone once and
+       builds (or doesn't build) the bottom tab bar off it. By now the document
+       has a real width even in a WebView that reported nothing in <head>. -->
+  <script>window.__pcPhoneCheck && window.__pcPhoneCheck();</script>
+  <!-- Supabase edition: the client library and the endpoint config load
+       before api.js, which is the only file in this tree that changed. -->
+  <script src="/js/supabase.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/offline.js"></script>
+  <script src="/js/store.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/qrcode.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
