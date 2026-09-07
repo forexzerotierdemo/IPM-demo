@@ -1,0 +1,1502 @@
+[
+ {
+  "method": "GET",
+  "path": "/health",
+  "handler": "health()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/auth/login",
+  "handler": "login()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/auth/me",
+  "handler": "me()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/auth/logout",
+  "handler": "logout()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/dashboard",
+  "handler": "dashboard()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/users",
+  "handler": "list_users()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/agents",
+  "handler": "list_agents()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/my-team",
+  "handler": "my_team()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/users",
+  "handler": "create_user()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/users/(\\d+)",
+  "handler": "update_user()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/users/(\\d+)",
+  "handler": "deactivate_user()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/users/(\\d+)/permanent",
+  "handler": "delete_user()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/shift-types",
+  "handler": "list_shift_types()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/shift-types",
+  "handler": "create_shift_type()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/shift-types/(\\d+)",
+  "handler": "update_shift_type()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/shift-types/(\\d+)",
+  "handler": "delete_shift_type()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/shifts",
+  "handler": "list_shifts()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/shifts/week",
+  "handler": "shift_week()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/shifts/day",
+  "handler": "set_day_shifts()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/shifts",
+  "handler": "assign_shift()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/shifts/bulk",
+  "handler": "assign_shifts_bulk()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/shifts/area",
+  "handler": "roster_area()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/shifts/auto",
+  "handler": "auto_roster()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/backup/options",
+  "handler": "backup_options()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/backup/list",
+  "handler": "backup_list()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/backup/download",
+  "handler": "backup_download()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/backup/prepare",
+  "handler": "backup_prepare()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/backup/file/([0-9a-f]{32})",
+  "handler": "backup_collect()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/shifts/auto/runs",
+  "handler": "list_roster_runs()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/shifts/auto/runs/(\\d+)/unplaced",
+  "handler": "roster_run_unplaced()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/shifts/auto/unplaced/(\\d+)/dismiss",
+  "handler": "dismiss_roster_unplaced()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/shifts/auto/over-asked",
+  "handler": "roster_over_asked()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/shifts/auto/who-can-take",
+  "handler": "who_can_take()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/shifts/auto/runs/(\\d+)/undo",
+  "handler": "undo_roster_run()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/schedule/clear",
+  "handler": "clear_schedule()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "DELETE",
+  "path": "/shifts/(\\d+)",
+  "handler": "delete_shift()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/permissions/catalog",
+  "handler": "permissions_catalog()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "PUT",
+  "path": "/permissions/roles/(\\w+)",
+  "handler": "update_role_permissions()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/permissions/users/(\\d+)",
+  "handler": "get_user_permissions()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/permissions/users/(\\d+)",
+  "handler": "update_user_permissions()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/audit",
+  "handler": "list_audit()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/clients",
+  "handler": "list_clients()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/clients/(\\d+)",
+  "handler": "get_client()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/clients/(\\d+)/status",
+  "handler": "set_client_status()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/sites/(\\d+)/status",
+  "handler": "set_site_status()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/clients",
+  "handler": "create_client()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/clients/(\\d+)",
+  "handler": "update_client()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/clients/(\\d+)",
+  "handler": "delete_client()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/sites",
+  "handler": "list_all_sites()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/branches/import",
+  "handler": "import_branches()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/cost-to-serve",
+  "handler": "cost_to_serve()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/service-gaps",
+  "handler": "service_gaps()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/pipeline",
+  "handler": "pipeline_board()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/capacity",
+  "handler": "capacity_check()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/branch-schedule",
+  "handler": "branch_schedule()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "PUT",
+  "path": "/branch-schedule",
+  "handler": "save_branch_schedule()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/clients/(\\d+)/sites",
+  "handler": "add_site()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/sites/(\\d+)",
+  "handler": "update_site()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/sites/(\\d+)",
+  "handler": "delete_site()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/sites/(\\d+)/map",
+  "handler": "upload_site_map()",
+  "target": "Storage"
+ },
+ {
+  "method": "DELETE",
+  "path": "/sites/(\\d+)/map",
+  "handler": "delete_site_map()",
+  "target": "Storage"
+ },
+ {
+  "method": "GET",
+  "path": "/service-types",
+  "handler": "list_service_types()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/service-types",
+  "handler": "create_service_type()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/visits",
+  "handler": "list_visits()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/visits/(\\d+)",
+  "handler": "get_visit()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visits",
+  "handler": "create_visit()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visits/batch",
+  "handler": "create_visits_batch()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "PUT",
+  "path": "/visits/(\\d+)",
+  "handler": "update_visit()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/visits/(\\d+)",
+  "handler": "delete_visit()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visits/(\\d+)/checkin",
+  "handler": "visit_checkin()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visits/(\\d+)/checkout",
+  "handler": "visit_checkout()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/visits/(\\d+)/report",
+  "handler": "delete_report()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/visits/(\\d+)/report",
+  "handler": "upsert_report()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/visits/(\\d+)/rating",
+  "handler": "rate_visit()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/reports/drafts",
+  "handler": "list_draft_reports()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/areas",
+  "handler": "list_areas()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/zones",
+  "handler": "list_zones()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/zones",
+  "handler": "create_zone()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/zones/(\\d+)",
+  "handler": "update_zone()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/zones/(\\d+)",
+  "handler": "delete_zone()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/agent-availability",
+  "handler": "get_agent_availability()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/agent-availability",
+  "handler": "set_agent_availability()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/areas",
+  "handler": "create_area()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "PUT",
+  "path": "/areas/(\\d+)",
+  "handler": "update_area()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/areas/(\\d+)/branches",
+  "handler": "area_branches()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/areas/(\\d+)/branches",
+  "handler": "set_area_branches()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "DELETE",
+  "path": "/areas/(\\d+)",
+  "handler": "delete_area()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/report-options",
+  "handler": "list_report_options()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/report-options",
+  "handler": "create_report_option()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "PUT",
+  "path": "/report-options/(\\d+)",
+  "handler": "update_report_option()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "DELETE",
+  "path": "/report-options/(\\d+)",
+  "handler": "delete_report_option()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/reports",
+  "handler": "list_reports()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/transport",
+  "handler": "list_transport()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visits/(\\d+)/transport",
+  "handler": "add_transport()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/transport/(\\d+)",
+  "handler": "delete_transport()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/chemicals",
+  "handler": "list_chemicals()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/chemicals",
+  "handler": "create_chemical()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/chemicals/(\\d+)",
+  "handler": "update_chemical()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/chemicals/(\\d+)",
+  "handler": "delete_chemical()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/chemicals/(\\d+)/stock",
+  "handler": "adjust_stock()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/purchase-orders",
+  "handler": "list_purchase_orders()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/purchase-orders",
+  "handler": "create_purchase_order()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/purchase-orders/(\\d+)",
+  "handler": "update_purchase_order()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/purchase-orders/(\\d+)",
+  "handler": "delete_purchase_order()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/chemicals/(\\d+)/transactions",
+  "handler": "chemical_transactions()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visits/(\\d+)/usage",
+  "handler": "record_usage()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/usage/(\\d+)",
+  "handler": "delete_usage()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/issues",
+  "handler": "list_issues()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/issues/balance",
+  "handler": "issues_balance()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/issues/(\\d+)",
+  "handler": "get_issue()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/issues",
+  "handler": "create_issue()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/issues/(\\d+)/approve",
+  "handler": "approve_issue()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/issues/(\\d+)/receive",
+  "handler": "receive_issue()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/issues/(\\d+)/dispute",
+  "handler": "dispute_issue()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/issues/(\\d+)/decline",
+  "handler": "decline_issue()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/issues/(\\d+)",
+  "handler": "delete_issue()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/returns",
+  "handler": "list_returns()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/returns/(\\d+)",
+  "handler": "get_return()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/returns",
+  "handler": "create_return()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/returns/(\\d+)/approve",
+  "handler": "approve_return()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/returns/(\\d+)/decline",
+  "handler": "decline_return()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/returns/(\\d+)/receive",
+  "handler": "receive_return()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/returns/(\\d+)/dispute",
+  "handler": "dispute_return()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/returns/(\\d+)",
+  "handler": "delete_return()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/cash",
+  "handler": "list_cash()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/cash/summary",
+  "handler": "cash_summary()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/cash",
+  "handler": "create_cash()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/cash/(\\d+)/approve",
+  "handler": "approve_cash()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/cash/(\\d+)/decline",
+  "handler": "decline_cash()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/cash/(\\d+)",
+  "handler": "delete_cash()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/invoices",
+  "handler": "list_invoices()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/invoices/(\\d+)",
+  "handler": "get_invoice()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/invoices",
+  "handler": "create_invoice()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/invoices/(\\d+)",
+  "handler": "update_invoice()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/invoices/(\\d+)",
+  "handler": "delete_invoice()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/invoices/(\\d+)/payments",
+  "handler": "add_payment()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/clients/(\\d+)/finance",
+  "handler": "client_finance()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/clients/(\\d+)/statement",
+  "handler": "client_statement()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/visits/(\\d+)/invoice",
+  "handler": "invoice_a_visit()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/contracts/(\\d+)/apply-to-branches",
+  "handler": "contract_to_branches()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/invoices/(\\d+)/to-contract",
+  "handler": "quote_to_contract()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/invoices/(\\d+)/convert",
+  "handler": "convert_quote()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/invoices/(\\d+)/approve",
+  "handler": "approve_quote()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/invoices/(\\d+)/decline",
+  "handler": "decline_quote()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/price-book",
+  "handler": "list_price_book()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/price-book",
+  "handler": "create_price_item()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/price-book/(\\d+)",
+  "handler": "update_price_item()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/price-book/(\\d+)",
+  "handler": "delete_price_item()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/leads",
+  "handler": "list_leads()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/leads",
+  "handler": "create_lead()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "PUT",
+  "path": "/leads/(\\d+)",
+  "handler": "update_lead()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "DELETE",
+  "path": "/leads/(\\d+)",
+  "handler": "delete_lead()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/leads/(\\d+)/convert",
+  "handler": "convert_lead()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/public/lead",
+  "handler": "public_lead()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/invoices/(\\d+)/pay",
+  "handler": "start_payment()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/payment-intents/([0-9a-fA-F]+)",
+  "handler": "get_payment_intent()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/payments/callback/(\\w+)",
+  "handler": "payment_callback()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/settings",
+  "handler": "read_settings()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/settings",
+  "handler": "write_settings()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/settings/logo",
+  "handler": "upload_logo()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/contracts",
+  "handler": "list_contracts()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/contracts",
+  "handler": "create_contract()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/contracts/(\\d+)",
+  "handler": "update_contract()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/contracts/(\\d+)",
+  "handler": "delete_contract()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/contracts/run",
+  "handler": "run_contracts()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/contracts/bill",
+  "handler": "run_billing()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/recurring-costs",
+  "handler": "list_recurring_costs()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/recurring-costs",
+  "handler": "create_recurring_cost()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/recurring-costs/(\\d+)",
+  "handler": "update_recurring_cost()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/recurring-costs/(\\d+)",
+  "handler": "delete_recurring_cost()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/recurring-costs/post",
+  "handler": "post_due_costs()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/expenses",
+  "handler": "list_expenses()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/expenses",
+  "handler": "create_expense()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/expenses/(\\d+)",
+  "handler": "update_expense()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/expenses/(\\d+)",
+  "handler": "delete_expense()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/budgets",
+  "handler": "list_budgets()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/budgets",
+  "handler": "set_budget()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/budgets/(\\d+)",
+  "handler": "delete_budget()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/finance/summary",
+  "handler": "finance_summary()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/vat-returns",
+  "handler": "list_vat_returns()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/vat-returns/(\\d+)",
+  "handler": "update_vat_return()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/vat-returns/(\\d+)/pay",
+  "handler": "pay_vat_return()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/finance/cashflow",
+  "handler": "finance_cashflow()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/finance/clients",
+  "handler": "finance_by_client()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/finance/contracts",
+  "handler": "finance_by_contract()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/marketing/targets",
+  "handler": "marketing_targets()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/marketing/person/(\\d+)",
+  "handler": "marketing_person()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/marketing/targets",
+  "handler": "set_marketing_target()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/marketing/targets/(\\d+)",
+  "handler": "delete_marketing_target()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/marketing/attribute",
+  "handler": "attribute_contract()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/geo/resolve",
+  "handler": "resolve_map_link()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/dispatch/optimize",
+  "handler": "dispatch_optimize()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/dispatch/sla",
+  "handler": "dispatch_sla()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/me/prefs",
+  "handler": "get_my_prefs()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "PUT",
+  "path": "/me/prefs",
+  "handler": "set_my_prefs()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/fixed-assignments",
+  "handler": "list_fixed_assignments()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/fixed-assignments",
+  "handler": "create_fixed_assignment()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "PUT",
+  "path": "/fixed-assignments/(\\d+)",
+  "handler": "update_fixed_assignment()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "DELETE",
+  "path": "/fixed-assignments/(\\d+)",
+  "handler": "delete_fixed_assignment()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/dispatch/grid",
+  "handler": "dispatch_grid()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/dispatch/cell",
+  "handler": "dispatch_cell()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/dispatch/move",
+  "handler": "dispatch_move()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/visit-requests",
+  "handler": "list_visit_requests()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visit-requests",
+  "handler": "create_visit_request()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visit-requests/(\\d+)/approve",
+  "handler": "approve_visit_request()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visit-requests/(\\d+)/decline",
+  "handler": "decline_visit_request()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/notifications",
+  "handler": "list_notifications()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/reminders/run",
+  "handler": "run_reminders()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/notifications/read",
+  "handler": "mark_notifications_read()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/notifications/generate",
+  "handler": "gen_notifications()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/notification-prefs",
+  "handler": "get_notification_prefs()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/notification-prefs",
+  "handler": "set_notification_prefs()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/engineers/scorecard",
+  "handler": "engineer_scorecard()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/analytics",
+  "handler": "analytics()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/clients/(\\d+)/analytics",
+  "handler": "client_analytics()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/clients/(\\d+)/pest-trends",
+  "handler": "client_pest_trends()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/clients/(\\d+)/audit-pack",
+  "handler": "client_audit_pack()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/visits/(\\d+)/signature",
+  "handler": "save_signature()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/export/(clients|visits|invoices|chemicals|payments|expenses|reports)\\.(csv|xlsx)",
+  "handler": "export_csv()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/export/reports-bundle\\.(csv|xlsx)\\.zip",
+  "handler": "export_reports_bundle()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "GET",
+  "path": "/photos",
+  "handler": "list_photos()",
+  "target": "Storage"
+ },
+ {
+  "method": "POST",
+  "path": "/photos",
+  "handler": "upload_photo()",
+  "target": "Storage"
+ },
+ {
+  "method": "PUT",
+  "path": "/photos/(\\d+)",
+  "handler": "update_photo()",
+  "target": "Storage"
+ },
+ {
+  "method": "DELETE",
+  "path": "/photos/(\\d+)",
+  "handler": "delete_photo()",
+  "target": "Storage"
+ },
+ {
+  "method": "GET",
+  "path": "/ipm-files",
+  "handler": "list_ipm_files()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/ipm-files",
+  "handler": "create_ipm_file()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/ipm-files/(\\d+)",
+  "handler": "update_ipm_file()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/ipm-files/(\\d+)/file",
+  "handler": "replace_ipm_file()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/ipm-files/(\\d+)",
+  "handler": "delete_ipm_file()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/maps",
+  "handler": "list_all_maps()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/clients/(\\d+)/maps",
+  "handler": "list_maps()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/maps/(\\d+)",
+  "handler": "get_map()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/maps",
+  "handler": "upload_map()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/maps/(\\d+)",
+  "handler": "delete_map()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/maps/(\\d+)/markers",
+  "handler": "add_marker()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "PUT",
+  "path": "/markers/(\\d+)",
+  "handler": "update_marker()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/markers/(\\d+)",
+  "handler": "delete_marker()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/scan/([0-9a-fA-F]{32})",
+  "handler": "scan_device()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/scan/([0-9a-fA-F]{32})",
+  "handler": "scan_inspect()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/devices",
+  "handler": "list_devices()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/devices/generate",
+  "handler": "generate_devices()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "POST",
+  "path": "/devices/assign",
+  "handler": "assign_devices()",
+  "target": "Edge Function"
+ },
+ {
+  "method": "PUT",
+  "path": "/devices/(\\d+)",
+  "handler": "update_device()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "DELETE",
+  "path": "/devices/(\\d+)",
+  "handler": "delete_device()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/devices/(\\d+)/history",
+  "handler": "device_history()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/scan/([A-Za-z]{3}\\d{4,})",
+  "handler": "scan_device_code()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "POST",
+  "path": "/scan/([A-Za-z]{3}\\d{4,})",
+  "handler": "inspect_device_code()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/visits/(\\d+)/devices",
+  "handler": "visit_device_coverage()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/visits/(\\d+)/followup",
+  "handler": "visit_followup()",
+  "target": "PostgREST"
+ },
+ {
+  "method": "GET",
+  "path": "/search",
+  "handler": "search()",
+  "target": "Edge Function"
+ }
+]

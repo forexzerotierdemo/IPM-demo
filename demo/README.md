@@ -176,8 +176,12 @@ computed** routes, these are ported —
 
 — and the rest are not: `finance/*`, analytics, capacity, service-gaps,
 pipeline, search, certificates, and the report PDF. The Edge Function answers
-those with `501` and `{items: [], total: 0}`, so an unfinished screen reads as
-**empty rather than broken**.
+those with `501` and `{"error": "Not available in this demo"}`, which app.js
+renders in its own empty-state style — an unfinished screen says **"⚠️ Not
+available in this demo"** rather than blanking or throwing.
+
+`node tools/coverage.js` prints exactly which of the 83 are live and which are
+not, by probing the deployed demo rather than by trusting this list.
 
 **One honest gap inside the dispatch board.** `dispatch_move` enforces every
 rule that is a WALL in roster.py's terms — area permission, the engineer's
