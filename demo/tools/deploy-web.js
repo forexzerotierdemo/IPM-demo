@@ -27,7 +27,40 @@ function walk(dir, base = '') {
   return out;
 }
 
+// Stamp the service worker with a hash of what it caches.
+//
+// sw.js precaches /js/api.js in its SHELL under a cache named by VERSION,
+// and only re-primes that cache when VERSION changes. api.js changed nine
+// times while VERSION was set once — so a browser that had visited before
+// could go on serving an api.js from hours earlier. The visible symptom was
+// a Save on the Permissions screen answering "Not available in this demo":
+// the old shim had no route for it, so the call fell through to the Edge
+// Function's 501. Nothing was wrong with the server at all.
+//
+// The version is now derived from the files, so it cannot be forgotten. It
+// is written to disk rather than injected in flight, so what is in the repo
+// stays byte-identical to what is deployed.
+function stampServiceWorker() {
+  // ROOT here is already web/ (see the DEMO alias above).
+  const sw = path.join(ROOT, 'sw.js');
+  const watched = ['js/api.js', 'js/app.js', 'js/config.js',
+                   'js/i18n-extra.js', 'index.html', 'css/styles.css'];
+  const h = crypto.createHash('sha1');
+  for (const f of watched) {
+    const p = path.join(ROOT, f);
+    if (fs.existsSync(p)) h.update(fs.readFileSync(p));
+  }
+  const version = 'pestcare-' + h.digest('hex').slice(0, 12);
+  const src = fs.readFileSync(sw, 'utf8');
+  const next = src.replace(/const VERSION = "[^"]*";/, `const VERSION = "${version}";`);
+  if (next === src) { console.log('sw cache version unchanged:', version); return version; }
+  fs.writeFileSync(sw, next);
+  console.log('sw cache version ->', version);
+  return version;
+}
+
 (async () => {
+  stampServiceWorker();
   const rels = walk(ROOT);
   console.log(rels.length, 'files');
 

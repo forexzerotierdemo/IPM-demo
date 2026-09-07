@@ -7,7 +7,7 @@
  *  - other same-origin GETs (icons, logo, pdf.js, jsQR): stale-while-revalidate.
  *  - navigations: fall back to the cached shell when offline.
  */
-const VERSION = "pestcare-supabase-v1";
+const VERSION = "pestcare-1b0d22bf1d21";
 const SHELL = [
   "/",
   "/index.html",
