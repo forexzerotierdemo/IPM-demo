@@ -182,7 +182,11 @@ DECLARE
   d          date;
   wd         int;
   wd_name    text;
-  person     users%ROWTYPE;
+  -- Named columns, not the whole row: 31_grants.sql took the blanket
+  -- SELECT off public.users, so a users%ROWTYPE fetch would ask for
+  -- password_hash and be refused.
+  person_id   bigint;
+  person_name text;
   v          visits%ROWTYPE;
   branch     sites%ROWTYPE;
   area_days  text;
@@ -208,7 +212,8 @@ BEGIN
   wd_name := (ARRAY['Monday','Tuesday','Wednesday','Thursday',
                     'Friday','Saturday','Sunday'])[wd + 1];
 
-  SELECT * INTO person FROM users WHERE id = p_agent_id;
+  SELECT u.id, u.full_name INTO person_id, person_name
+    FROM users u WHERE u.id = p_agent_id;
   IF NOT FOUND THEN
     RAISE EXCEPTION 'That engineer is not on the board.';
   END IF;
@@ -226,26 +231,26 @@ BEGIN
     END IF;
 
     IF NOT EXISTS (SELECT 1 FROM agent_availability a
-                    WHERE a.agent_id = person.id) THEN
-      RAISE EXCEPTION '% has no working hours on the board.', person.full_name;
+                    WHERE a.agent_id = person_id) THEN
+      RAISE EXCEPTION '% has no working hours on the board.', person_name;
     END IF;
 
     SELECT aa.weekdays INTO area_days
       FROM agent_areas aa
-     WHERE aa.agent_id = person.id AND aa.area_id = branch.area_id;
+     WHERE aa.agent_id = person_id AND aa.area_id = branch.area_id;
     IF NOT FOUND THEN
-      RAISE EXCEPTION '% is not permitted in %''s area.', person.full_name, branch.name;
+      RAISE EXCEPTION '% is not permitted in %''s area.', person_name, branch.name;
     END IF;
     -- agent_areas.weekdays empty means "any day he works"; otherwise the day
     -- must be named in it. This is roster.py's may_work().
     IF COALESCE(area_days, '') <> ''
        AND NOT (wd::text = ANY (string_to_array(area_days, ','))) THEN
-      RAISE EXCEPTION '% does not work that area on a %.', person.full_name, wd_name;
+      RAISE EXCEPTION '% does not work that area on a %.', person_name, wd_name;
     END IF;
 
     IF NOT EXISTS (SELECT 1 FROM agent_availability a
-                    WHERE a.agent_id = person.id AND a.weekday = wd) THEN
-      RAISE EXCEPTION '% does not work on a %.', person.full_name, wd_name;
+                    WHERE a.agent_id = person_id AND a.weekday = wd) THEN
+      RAISE EXCEPTION '% does not work on a %.', person_name, wd_name;
     END IF;
 
     -- opens_on(): a branch with NO named days is open every day.

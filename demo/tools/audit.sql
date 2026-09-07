@@ -6,12 +6,43 @@ SELECT 'rls_disabled' AS check, c.relname AS object,
  WHERE n.nspname = 'public' AND c.relkind = 'r' AND NOT c.relrowsecurity
 
 UNION ALL
+-- RLS on with no policy is deny-all, which is a fine deliberate state for a
+-- table nothing should read. It is only a smell when a client role STILL
+-- holds a grant: then the table is one careless policy away from readable.
+-- A table with neither a policy nor a grant is locked by construction.
 SELECT 'no_policies', t.tablename,
-       'RLS is on but no policy exists — the table is default-deny to everyone'
+       'RLS on, no policy, but anon/authenticated still hold a grant'
   FROM pg_tables t
  WHERE t.schemaname = 'public'
    AND NOT EXISTS (SELECT 1 FROM pg_policies p
                     WHERE p.schemaname = 'public' AND p.tablename = t.tablename)
+   AND EXISTS (SELECT 1 FROM information_schema.role_table_grants g
+                WHERE g.table_schema = 'public' AND g.table_name = t.tablename
+                  AND g.grantee IN ('anon','authenticated'))
+
+UNION ALL
+-- Credentials must not be selectable by a client role, whatever the policy.
+SELECT 'credential_column_readable', g.table_name || '.' || g.column_name,
+       'a client role can SELECT this column'
+  FROM information_schema.column_privileges g
+ WHERE g.table_schema = 'public' AND g.privilege_type = 'SELECT'
+   AND g.grantee IN ('anon','authenticated')
+   AND g.column_name IN ('password_hash','token_version','auth_id')
+
+UNION ALL
+-- TRUNCATE is not subject to RLS: a grant here erases a table regardless of
+-- every policy in §6.
+SELECT 'truncate_granted', g.table_name, 'client role holds TRUNCATE'
+  FROM information_schema.role_table_grants g
+ WHERE g.table_schema = 'public' AND g.privilege_type = 'TRUNCATE'
+   AND g.grantee IN ('anon','authenticated')
+
+UNION ALL
+-- An unauthenticated visitor has no screen in this app and should hold
+-- nothing at all.
+SELECT 'anon_has_grant', g.table_name, 'anon holds ' || g.privilege_type
+  FROM information_schema.role_table_grants g
+ WHERE g.table_schema = 'public' AND g.grantee = 'anon'
 
 UNION ALL
 -- §12 failure #1: "A view without security_invoker = true. Bypasses every

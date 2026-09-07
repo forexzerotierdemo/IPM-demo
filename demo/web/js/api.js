@@ -355,12 +355,13 @@ async function resetIfTrial(email) {
 // The public.users row for the signed-in account, shaped like the old
 // /api/auth/me payload: the public profile plus the resolved permission map.
 async function profile() {
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) throw new Error("Not signed in");
-  const me = await sb.from("v_users").select("*").eq("auth_id", user.id).maybeSingle().then(unwrap);
-  if (!me) throw new Error("No profile for this account");
-  const perms = await sb.rpc("my_permissions").then(unwrap);
-  return { ...me, permissions: perms || {} };
+  // One RPC, not a lookup keyed on auth_id. auth_id is the GoTrue
+  // identifier that ties a profile row to a login, and it has no business
+  // crossing the wire — my_profile() answers "who am I" without it, and
+  // returns the resolved permission map in the same round trip.
+  const me = await sb.rpc("my_profile").then(unwrap);
+  if (!me || !me.id) throw new Error("Not signed in");
+  return me;
 }
 
 // ------------------------------------------------------- Edge fallback
