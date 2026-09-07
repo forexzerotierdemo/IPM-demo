@@ -228,6 +228,14 @@ const ROUTES = [
       p_site_id: q.site_id || null,
     }).then(unwrap)],
   ["GET", /^\/permissions\/catalog$/, () => sb.rpc("permissions_catalog").then(unwrap)],
+  // The matrix is editable, `trial` included — an owner tuning what a
+  // prospect may see should not have to edit SQL to do it.
+  ["PUT", /^\/permissions\/roles\/(\w+)$/, (m, b) => sb.rpc("update_role_permissions", {
+      p_role: m[1], p_perms: b.perms || {} }).then(unwrap)],
+  ["GET", /^\/permissions\/users\/(\d+)$/, (m) =>
+      sb.rpc("get_user_permissions", { p_user_id: Number(m[1]) }).then(unwrap)],
+  ["PUT", /^\/permissions\/users\/(\d+)$/, (m, b) => sb.rpc("update_user_permissions", {
+      p_user_id: Number(m[1]), p_perms: b.perms || {} }).then(unwrap)],
   // Must sit above the generic /reports table, or "drafts" is read as an id.
   ["GET", /^\/reports\/drafts$/, () => sb.rpc("reports_drafts").then(unwrap)],
 

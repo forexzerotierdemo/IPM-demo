@@ -43,6 +43,19 @@ or manager account, so what a prospect may do is one row set in
 52 of the 75 permissions, and the UI reflects it: there is no Delete control on
 the Clients screen, and no Backup or Finance in the menu.
 
+**You can change any of it from the Permissions screen.** `trial` is a role in
+the matrix like any other — pick it from the dropdown, tick what a prospect
+should see, save. It takes effect on their next sign-in, and it is the database
+that enforces it, not the menu: a permission you withdraw is refused even by a
+direct API call. `tools/test-rbac.js` proves exactly that, by granting
+`clients.delete`, deleting a row, withdrawing it, and watching the next delete
+fail.
+
+> Widening `trial` costs nothing permanent — `demo_reset()` restores everything
+> when the last trial session ends. But *between* resets, a prospect given
+> `clients.delete` really can delete a customer, and the next visitor walks into
+> the hole. That is the trade this screen is making.
+
 **Deleting is the deliberate omission.** Nobody needs to delete a record to
 decide whether they want the software, and between resets a deleted branch is a
 hole in the demo that the next visitor walks into.
@@ -107,7 +120,7 @@ To re-baseline after deliberately changing the seed:
 
 ```
 demo/
-  migrations/    01–40, applied in order. The whole database.
+  migrations/    01–41, applied in order. The whole database.
   web/           what Vercel serves. The live static/ tree with ONE file changed.
   supabase/functions/api/   the catch-all Edge Function for the computed routes.
   tools/         scripts to apply, verify and deploy. No CLI needed for any of it.
@@ -291,6 +304,7 @@ cp .env.example .env       # then fill it in
    node tools/test-dispatch.js         # the board, shape by shape
    node tools/test-scan.js             # the QR chain, scan to report
    node tools/test-actions.js          # the buttons on the screens
+   node tools/test-rbac.js             # the matrix really controls access
    node tools/reseed.js                # put the demo data back after testing
    ```
 

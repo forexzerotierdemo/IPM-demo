@@ -66,6 +66,11 @@ const SHIM = [
   [/^\/cash\/\(\\d\+\)\/(approve|decline)$/, 'RPC handle_cash'],
   [/^\/visit-requests\/\(\\d\+\)\/(approve|decline)$/, 'RPC handle_visit_request'],
   [/^\/notifications\/read$/, 'RPC mark_notifications_read'],
+  // The permission matrix as a control surface (41_rbac_trial.sql).
+  [/^\/permissions\/roles\/\(\\w\+\)$/, 'RPC update_role_permissions'],
+  [/^\/permissions\/users\/\(\\d\+\)$/, 'RPC get/update_user_permissions'],
+  [/^\/issues\/balance$/, 'RPC issues_balance'],
+  [/^\/leads\/\(\\d\+\)\/convert$/, 'RPC convert_lead'],
 ];
 
 // The shim's GENERIC resource table answers /<resource> and /<resource>/<id>
