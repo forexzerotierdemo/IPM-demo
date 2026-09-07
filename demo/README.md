@@ -14,7 +14,7 @@ auth, storage and the computed routes; Vercel for the static front end.
 | `engineer@demo.foxcrm.app` | `demo1234` | The phone view — his own round only |
 | `engineer2@demo.foxcrm.app` | `demo1234` | A second engineer, so the roster has two people |
 | `client@demo.foxcrm.app` | `demo1234` | The customer portal, in Arabic — one company |
-| `trial@demo.foxcrm.app` | `trial1234` | **The one to hand a prospect.** Full admin, and nothing they do survives — see below |
+| `trial@demo.foxcrm.app` | `trial1234` | **The one to hand a prospect.** Its own `trial` role — see below |
 
 The passwords are deliberately weak and public. **This project must therefore
 contain nothing real, ever** — no live customer, no live photo, no live
@@ -29,9 +29,24 @@ response shapes.
 ## The trial account
 
 `trial@demo.foxcrm.app` / `trial1234` is the login to send to someone deciding
-whether to buy. They get the full admin view and may create, edit and delete
-anything — that is the point. The whole dataset is then restored from a
-snapshot:
+whether to buy. It has a **role of its own — `trial`** — not a borrowed admin
+or manager account, so what a prospect may do is one row set in
+`role_permissions` rather than a role plus a list of exceptions.
+
+| | |
+|---|---|
+| **sees, creates and edits** | clients, branches, the diary, dispatch, requests, reports, contracts, invoices, chemicals, devices, issues, petty cash, transport, shifts, leads, targets, the IPM library, analytics |
+| **sees, cannot change** | the staff list, the permission matrix, company settings |
+| **cannot do at all** | delete anything · create or edit staff · edit permissions or settings · clear the schedule · the finance ledger · the audit log · backups |
+
+52 of the 75 permissions, and the UI reflects it: there is no Delete control on
+the Clients screen, and no Backup or Finance in the menu.
+
+**Deleting is the deliberate omission.** Nobody needs to delete a record to
+decide whether they want the software, and between resets a deleted branch is a
+hole in the demo that the next visitor walks into.
+
+Whatever they *do* change is then restored from a snapshot:
 
 * when they sign **out** — they finished; and
 * when they sign **in** — because the previous visitor almost never signs out,
@@ -42,9 +57,9 @@ PostgREST, so a trial user can wreck `public` all they like and never reach the
 master copy. A reset takes about half a second, is refused for every other
 login (admin included), and is throttled to one per 10 seconds.
 
-The account is a `manager`, not an `admin` — see **Hardening** — so it runs the
-whole operational system and the analytics, but cannot touch staff accounts,
-company settings, the permission matrix, or "clear the entire diary".
+`demo_reset()` is keyed on the **role**, not on an email address, so a second
+trial account needs no code change — and no address is hardcoded into the
+front end.
 
 > **Re-take the snapshot after any change to seeded data.** It is the state
 > every trial login restores, so a stale snapshot silently undoes later work —
@@ -66,7 +81,7 @@ To re-baseline after deliberately changing the seed:
 
 ```
 demo/
-  migrations/    01–31, applied in order. The whole database.
+  migrations/    01–32, applied in order. The whole database.
   web/           what Vercel serves. The live static/ tree with ONE file changed.
   supabase/functions/api/   the catch-all Edge Function for the computed routes.
   tools/         scripts to apply, verify and deploy. No CLI needed for any of it.
@@ -94,8 +109,10 @@ Function, so the computed routes can be ported one at a time and the app keeps
 working throughout.
 
 Everything else in `web/` that is new: `js/supabase.js` (vendored client),
-`js/config.js` (generated endpoint + column map), two `<script>` tags in
-`index.html`, and a bumped cache name in `sw.js`.
+`js/config.js` (generated endpoint + column map), `js/i18n-extra.js` (labels
+for demo-only things, added by extending the table i18n.js defines rather than
+editing it), three `<script>` tags in `index.html`, and a bumped cache name in
+`sw.js`.
 
 ## Security model
 
@@ -148,9 +165,12 @@ does not govern), and that `anon` holds no grant at all.
   admin. That is what lets a powerful-looking account have specific powers
   withheld.
 - **Self-signup is off**, so the public anon key cannot mint accounts.
-- **The trial account is a `manager`, not an `admin`**, because `app.js`'s own
-  `can()` short-circuits admin — and `app.js` does not change.
-- **`demo_reset()` belongs to the trial account alone**, throttled to one call
+- **The trial account has its own `trial` role**, never `admin`. `app.js`'s own
+  `can()` short-circuits `role === "admin"` to true, so an admin-shaped account
+  is offered every menu item however the server is configured — and `app.js`
+  does not change. A distinct role is also the honest description: a prospect
+  evaluating the system is not an administrator of it.
+- **`demo_reset()` belongs to the `trial` role alone**, throttled to one call
   per 10 seconds. Any other login, admin included, is refused.
 - **Headers**: a CSP whose `connect-src` is pinned to this one Supabase
   project, `frame-ancestors 'none'` and `X-Frame-Options: DENY` so the CRM

@@ -153,22 +153,22 @@ function applyQuery(sel, res, q) {
 const ROUTES = [
   // ---- auth -------------------------------------------------------------
   ["POST", /^\/auth\/login$/, async (m, body) => {
-    const email = (body.email || "").trim().toLowerCase();
     const { data, error } = await sb.auth.signInWithPassword({
-      email, password: body.password,
+      email: (body.email || "").trim().toLowerCase(), password: body.password,
     });
     if (error) throw new Error("Invalid email or password");
-    // The trial account is a sandbox: it starts clean every time. Resetting
-    // on the way IN is the half that matters — the previous visitor almost
-    // never signs out, they just close the tab.
-    await resetIfTrial(email);
-    return { token: data.session.access_token, user: await profile() };
+    // The trial ROLE is a sandbox: it starts clean every time. Resetting on
+    // the way IN is the half that matters — the previous visitor almost
+    // never signs out, they just close the tab. The reset restores the
+    // profile identically, so reading it first costs nothing.
+    const me = await profile();
+    await resetIfTrial(me.role);
+    return { token: data.session.access_token, user: me };
   }],
   ["POST", /^\/auth\/logout$/, async () => {
     // ...and again on the way out, so the demo is pristine the moment they
     // finish rather than only when the next person arrives.
-    const { data: { user } } = await sb.auth.getUser().catch(() => ({ data: {} }));
-    await resetIfTrial(user && user.email);
+    await resetIfTrial(API.user && API.user.role);
     await sb.auth.signOut();
     return { ok: true };
   }],
@@ -339,16 +339,19 @@ async function generic(method, path, body, q) {
 }
 
 // ------------------------------------------------------- the sandbox
-// The trial login is for handing to a prospect: they may edit, create and
-// delete anything, and none of it survives the session. demo_reset() puts
-// the whole dataset back from a snapshot the trial user cannot reach.
+// The `trial` role is for handing to a prospect: they may look at and change
+// the whole operational system, and none of it survives the session.
+// demo_reset() puts the dataset back from a snapshot they cannot reach, and
+// refuses every other role — so this is safe to call unconditionally.
 //
-// Failure here is deliberately swallowed. A reset that does not run leaves
-// the demo untidy; a reset whose error blocks the login leaves the prospect
+// Keyed on the ROLE, not on an address: a second trial account needs no
+// change here, and there is no email hardcoded into the front end.
+//
+// Failure is deliberately swallowed. A reset that does not run leaves the
+// demo untidy; a reset whose error blocks the login leaves the prospect
 // staring at "Invalid email or password", which is far worse.
-async function resetIfTrial(email) {
-  const trial = (window.__TRIAL_EMAIL__ || "").toLowerCase();
-  if (!trial || !email || email.toLowerCase() !== trial) return;
+async function resetIfTrial(role) {
+  if (role !== "trial") return;
   try { await sb.rpc("demo_reset"); } catch (e) { /* untidy, not broken */ }
 }
 
