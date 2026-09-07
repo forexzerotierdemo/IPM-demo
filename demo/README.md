@@ -39,7 +39,17 @@ snapshot:
 
 The snapshot lives in a `demo_snapshot` schema that is not exposed to
 PostgREST, so a trial user can wreck `public` all they like and never reach the
-master copy. A reset takes about half a second.
+master copy. A reset takes about half a second, is refused for every other
+login (admin included), and is throttled to one per 10 seconds.
+
+The account is a `manager`, not an `admin` — see **Hardening** — so it runs the
+whole operational system and the analytics, but cannot touch staff accounts,
+company settings, the permission matrix, or "clear the entire diary".
+
+> **Re-take the snapshot after any change to seeded data.** It is the state
+> every trial login restores, so a stale snapshot silently undoes later work —
+> that is exactly how the hardening's permission denials got wiped on the first
+> attempt.
 
 > **It is one shared sandbox, not a private copy each.** Two people testing at
 > the same time see each other's edits, and whoever signs in second wipes the
@@ -56,7 +66,7 @@ To re-baseline after deliberately changing the seed:
 
 ```
 demo/
-  migrations/    01–29, applied in order. The whole database.
+  migrations/    01–31, applied in order. The whole database.
   web/           what Vercel serves. The live static/ tree with ONE file changed.
   supabase/functions/api/   the catch-all Edge Function for the computed routes.
   tools/         scripts to apply, verify and deploy. No CLI needed for any of it.
@@ -108,13 +118,55 @@ PostgREST actually hands that JWT.
 
 ```
 account     v_clients    v_sites   v_visits  v_reports    v_users  v_devices   invoices
-admin               4         20        216         38          7         80         13
-manager             4         20        216         38          7         80         13
-area                4          8         90         16          5         32          0
-leader              4         20        216         38          5          0          0
-engineer            4          8         90         16          5          0          0
+admin               4         20        216         38          8         80         13
+manager             4         20        216         38          8         80         13
+area                4          8         90         16          6         32          0
+leader              4         20        216         38          6          0          0
+engineer            4          8         90         16          6          0          0
 client              1          5         55          9          3         20          6
 ```
+
+## Hardening
+
+The demo is a login handed to strangers, so it was attacked rather than
+reviewed. `node tools/sql.js tools/audit.sql` must print `[]`. It checks that
+RLS is on and forced, that every view is `security_invoker`, that no SECURITY
+DEFINER function has a mutable `search_path`, that no credential column is
+selectable by a client role, that no client role holds TRUNCATE (which RLS
+does not govern), and that `anon` holds no grant at all.
+
+- **`anon` holds nothing.** Every screen is behind a login, so an
+  unauthenticated caller gets no privilege — rather than a policy that
+  happens to return no rows.
+- **`authenticated` keeps only the four verbs PostgREST uses.** No TRUNCATE,
+  TRIGGER or REFERENCES, and `ALTER DEFAULT PRIVILEGES` stops newly created
+  objects regaining them.
+- **Credentials are not a column anyone can select.** `password_hash`,
+  `token_version` and `auth_id` are off the wire entirely; `my_profile()`
+  resolves the caller through `app_uid()`.
+- **An explicit per-user permission beats the role default**, including for
+  admin. That is what lets a powerful-looking account have specific powers
+  withheld.
+- **Self-signup is off**, so the public anon key cannot mint accounts.
+- **The trial account is a `manager`, not an `admin`**, because `app.js`'s own
+  `can()` short-circuits admin — and `app.js` does not change.
+- **`demo_reset()` belongs to the trial account alone**, throttled to one call
+  per 10 seconds. Any other login, admin included, is refused.
+- **Headers**: a CSP whose `connect-src` is pinned to this one Supabase
+  project, `frame-ancestors 'none'` and `X-Frame-Options: DENY` so the CRM
+  cannot be embedded in another page, plus HSTS, nosniff, a referrer policy
+  and noindex.
+
+Re-apply the project-level settings (PostgREST row cap, signup off) with
+`node tools/harden.js`.
+
+> **What is NOT protected: the front-end code.** `app.js` is 863 KB of the
+> real application and is served to every visitor's browser. Anyone who opens
+> devtools can read and save it. That is true of every web app, and no amount
+> of obfuscation changes it. If the front-end source matters commercially, do
+> not make the demo public — issue a login per prospect, or screen-share it
+> instead. The Python backend (`server.py`, `roster.py`) is never deployed
+> here and is not exposed at all.
 
 ## Building it from nothing
 
@@ -148,6 +200,7 @@ cp .env.example .env       # then fill it in
    ```
 5. **Prove it.**
    ```sh
+   node tools/harden.js                # project settings: row cap, signup off
    node tools/sql.js tools/audit.sql   # must print []
    node tools/verify-rls.js
    node tools/smoke.js
