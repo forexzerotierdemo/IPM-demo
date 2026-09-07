@@ -4,6 +4,23 @@
 // against the demo" idea, cut down to what one file can cover.
 const { env, login } = require('./env');
 
+const H = t => ({ apikey: env.ANON, Authorization: 'Bearer ' + t });
+
+const ymd = d => d.toISOString().slice(0, 10);
+const monthStart = () => { const d = new Date(); d.setUTCDate(1); return ymd(d); };
+const monthEnd = () => { const d = new Date(); d.setUTCMonth(d.getUTCMonth() + 1, 0); return ymd(d); };
+
+// A route the caller holds no permission for is SUPPOSED to refuse. Wrap
+// those probes so a clean refusal reads as a pass, not a failure — the
+// suite runs as six different roles and most of them cannot dispatch.
+const orDenied = fn => async t => {
+  try { return await fn(t); }
+  catch (e) {
+    if (/Not permitted|permission denied/i.test(e.message)) return 'refused (correct)';
+    throw e;
+  }
+};
+
 const PROBES = [
   ['GET  /dashboard',       t => rpc(t, 'dashboard_summary')],
   ['GET  /auth/me',         t => rest(t, 'v_users?select=*&limit=1')],
@@ -23,12 +40,15 @@ const PROBES = [
   ['GET  /areas',           t => rest(t, 'areas?select=*&order=sort_order')],
   ['GET  /notifications',   t => rest(t, 'notifications?select=*')],
   ['RPC  my_permissions',   t => rpc(t, 'my_permissions')],
-  ['EDGE /dispatch/grid',   t => edge(t, '/dispatch/grid')],
+  // The dispatch board is SQL, not an Edge Function — see 21_dispatch.sql.
+  ['RPC  dispatch_grid',    orDenied(t => rpc(t, 'dispatch_grid',
+                                     { p_from: monthStart(), p_to: monthEnd() }))],
+  ['RPC  dispatch_sla',     orDenied(t => rpc(t, 'dispatch_sla'))],
+  ['EDGE /dispatch/optimize', orDenied(t => edge(t, '/dispatch/optimize', 'POST',
+                                        { agent_id: 5, date: monthStart() }))],
   ['EDGE /engineers/scorecard', t => edge(t, '/engineers/scorecard')],
   ['EDGE /unported/thing',  t => edge(t, '/some/unported/route')],
 ];
-
-const H = t => ({ apikey: env.ANON, Authorization: 'Bearer ' + t });
 
 async function rest(t, q) {
   const r = await fetch(`${env.SUPABASE_URL}/rest/v1/${q}`, { headers: H(t) });
@@ -36,15 +56,18 @@ async function rest(t, q) {
   if (!r.ok) throw new Error(j.message || j.hint || r.status);
   return Array.isArray(j) ? `${j.length} rows` : 'ok';
 }
-async function rpc(t, name) {
+async function rpc(t, name, args = {}) {
   const r = await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/${name}`, {
-    method: 'POST', headers: { ...H(t), 'Content-Type': 'application/json' }, body: '{}' });
+    method: 'POST', headers: { ...H(t), 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
   const j = await r.json();
   if (!r.ok) throw new Error(j.message || r.status);
   return Object.keys(j || {}).length + ' keys';
 }
-async function edge(t, path) {
-  const r = await fetch(`${env.SUPABASE_URL}/functions/v1/api${path}`, { headers: H(t) });
+async function edge(t, path, method = 'GET', body) {
+  const r = await fetch(`${env.SUPABASE_URL}/functions/v1/api${path}`, {
+    method,
+    headers: { ...H(t), 'Content-Type': 'application/json' },
+    body: body === undefined ? undefined : JSON.stringify(body) });
   const j = await r.json().catch(() => null);
   if (r.status === 501) return 'not ported (501, handled)';
   if (!r.ok) throw new Error((j && j.error) || r.status);

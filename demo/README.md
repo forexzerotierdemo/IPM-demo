@@ -25,7 +25,7 @@ paperwork. See `../docs/supabase-demo/README-GUIDE.md` §10.1.
 
 ```
 demo/
-  migrations/    01–20, applied in order. The whole database.
+  migrations/    01–23, applied in order. The whole database.
   web/           what Vercel serves. The live static/ tree with ONE file changed.
   supabase/functions/api/   the catch-all Edge Function for the computed routes.
   tools/         scripts to apply, verify and deploy. No CLI needed for any of it.
@@ -77,12 +77,12 @@ PostgREST actually hands that JWT.
 
 ```
 account     v_clients    v_sites   v_visits  v_reports    v_users  v_devices   invoices
-admin               4         20        187         38          7         80         13
-manager             4         20        187         38          7         80         13
-area                4          8         79         16          5         32          0
-leader              4         20        187         38          5          0          0
-engineer            4          8         79         16          5          0          0
-client              1          5         48          9          3         20          6
+admin               4         20        216         38          7         80         13
+manager             4         20        216         38          7         80         13
+area                4          8         90         16          5         32          0
+leader              4         20        216         38          5          0          0
+engineer            4          8         90         16          5          0          0
+client              1          5         55          9          3         20          6
 ```
 
 ## Building it from nothing
@@ -120,6 +120,7 @@ cp .env.example .env       # then fill it in
    node tools/sql.js tools/audit.sql   # must print []
    node tools/verify-rls.js
    node tools/smoke.js
+   node tools/test-dispatch.js         # the board, shape by shape
    ```
 
 ## Corrections to the build guide
@@ -166,13 +167,25 @@ computed** routes, these are ported —
 
 - `/dashboard`, the owner cockpit and the SLA tiering, as **RPCs** rather than
   Edge Functions (§9.1's own advice: the easy aggregates belong in SQL)
-- `/dispatch/grid`, `/dispatch/cell`, `/visits/:id/followup`,
-  `/engineers/scorecard`, in the Edge Function
+- **the whole dispatch board** — `/dispatch/grid`, `/cell`, `/sla` and `/move`
+  as SQL functions, and `/shifts/week` with it, because app.js only shows the
+  day/week/month selector once that call succeeds
+- `/dispatch/optimize` in the Edge Function: nearest-neighbour routing is the
+  one part of the board that genuinely needs a procedural language
+- `/visits/:id/followup` and `/engineers/scorecard`, in the Edge Function
 
-— and the rest are not: most of dispatch, `finance/*`, analytics, capacity,
-service-gaps, pipeline, search, certificates, and the report PDF. The Edge
-Function answers those with `501` and `{items: [], total: 0}`, so an unfinished
-screen reads as **empty rather than broken**.
+— and the rest are not: `finance/*`, analytics, capacity, service-gaps,
+pipeline, search, certificates, and the report PDF. The Edge Function answers
+those with `501` and `{items: [], total: 0}`, so an unfinished screen reads as
+**empty rather than broken**.
+
+**One honest gap inside the dispatch board.** `dispatch_move` enforces every
+rule that is a WALL in roster.py's terms — area permission, the engineer's
+hours, the branch's opening days, one branch one day one van — because each
+is a plain question about a row. What it does not do is `Day._sequence`, the
+last pass that fits the whole round against the travel ceiling. So the board
+will accept a round the real planner might still refuse as undrivable. It
+never accepts one that breaks a wall.
 
 **The auto-roster is deliberately not ported.** `roster.py` is 2,759 lines of
 six interacting rules with an explicit precedence and a bend-but-report

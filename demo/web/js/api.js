@@ -181,6 +181,31 @@ const ROUTES = [
   // the same policies that scope the lists.
   ["GET", /^\/dashboard$/, () => sb.rpc("dashboard_summary").then(unwrap)],
 
+  // ---- the dispatch board ----------------------------------------------
+  // grid/cell/sla/move are SQL functions, not Edge Function routes: each is
+  // a counting or a scoping question, and SECURITY INVOKER means the §6
+  // policies scope them without a role branch anywhere. /dispatch/optimize
+  // is the exception and falls through to the Edge Function below, because
+  // nearest-neighbour routing needs a procedural language.
+  ["GET", /^\/dispatch\/grid$/, (m, b, q) => sb.rpc("dispatch_grid", {
+      p_from: q.from, p_to: q.to || q.from,
+      p_agent: q.agent ? Number(q.agent) : null,
+      p_area: q.area ? Number(q.area) : null,
+    }).then(unwrap)],
+  ["GET", /^\/dispatch\/cell$/, (m, b, q) => sb.rpc("dispatch_cell", {
+      p_date: q.date, p_agent: q.agent ? Number(q.agent) : null,
+    }).then(unwrap)],
+  ["GET", /^\/dispatch\/sla$/, () => sb.rpc("dispatch_sla").then(unwrap)],
+  // The weekly roster. The dispatch board needs it before it will show the
+  // day/week/month selector at all, so it is part of that screen even though
+  // it lives under /shifts.
+  ["GET", /^\/shifts\/week$/, (m, b, q) =>
+      sb.rpc("shift_week", { p_start: q.start || null }).then(unwrap)],
+  ["POST", /^\/dispatch\/move$/, (m, b) => sb.rpc("dispatch_move", {
+      p_visit_ids: b.visit_ids || (b.visit_id ? [b.visit_id] : []),
+      p_agent_id: Number(b.agent_id), p_date: b.date,
+    }).then(unwrap)],
+
   // ---- the field-staff projection --------------------------------------
   ["GET", /^\/agents$/, () => sb.from("v_users").select("*")
       .in("role", ["agent", "area_manager", "team_leader"])
