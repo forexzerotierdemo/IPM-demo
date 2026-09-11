@@ -44,7 +44,7 @@ function stampServiceWorker() {
   // ROOT here is already web/ (see the DEMO alias above).
   const sw = path.join(ROOT, 'sw.js');
   const watched = ['js/api.js', 'js/app.js', 'js/config.js',
-                   'js/i18n-extra.js', 'index.html', 'css/styles.css'];
+                   'js/i18n-extra.js', 'js/nav-extra.js', 'index.html', 'css/styles.css'];
   const h = crypto.createHash('sha1');
   for (const f of watched) {
     const p = path.join(ROOT, f);

@@ -7,7 +7,7 @@
  *  - other same-origin GETs (icons, logo, pdf.js, jsQR): stale-while-revalidate.
  *  - navigations: fall back to the cached shell when offline.
  */
-const VERSION = "pestcare-1b0d22bf1d21";
+const VERSION = "pestcare-63d9fbfef6ab";
 const SHELL = [
   "/",
   "/index.html",
@@ -25,6 +25,7 @@ const SHELL = [
   // (app.js only injects the <script> when the camera dialog opens)
   "/js/jsqr.js",
   "/js/app.js",
+  "/js/nav-extra.js",
   "/foxsyslogo.png",
   "/manifest.webmanifest",
   "/icons/icon-192.png",
