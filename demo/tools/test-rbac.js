@@ -116,9 +116,41 @@ const check = (name, ok, detail = '') => {
   // ---- and nobody else may touch any of it ----------------------------
   console.log('\nwho may change it');
   const t3 = await trialUser();
+  // Refused by ROLE, not merely by the permission bit. That matters since
+  // migration 45: the permission tables now survive demo_reset, so a prospect
+  // handed permissions.edit to show the screen off could otherwise make a
+  // PERMANENT change to the owner's portal.
   check('a trial user cannot edit the matrix',
         (await refused(() => rpc(t3, 'update_role_permissions',
-          { p_role: 'trial', p_perms: { 'users.delete': true } }))) === 'Not permitted');
+          { p_role: 'trial', p_perms: { 'users.delete': true } })))
+          === 'The trial portal cannot change permissions');
+  check('nor the per-user overrides',
+        (await refused(() => rpc(t3, 'update_user_permissions',
+          { p_user_id: 2, p_perms: { 'users.delete': true } })))
+          === 'The trial portal cannot change permissions');
+
+  // ---- what the owner sets OUTLIVES the sandbox wipe -------------------
+  // The bug this guards: role_permissions was truncated and restored from
+  // demo_snapshot along with the demo data, so the owner would save a
+  // permission and the next prospect to sign out silently rolled it back.
+  // It looked exactly like the save not working.
+  console.log('');
+  console.log('what the owner sets survives a trial sign-out');
+  await rpc(admin, 'update_role_permissions',
+            { p_role: 'trial', p_perms: { 'clients.delete': true } });
+  const tk = await trialUser();
+  await rpc(tk, 'trial_session_start', { p_user_agent: 'rbac persistence check' });
+  const ended = await rpc(tk, 'trial_session_end');
+  check('the sign-out really did reset the sandbox', ended.reset === true,
+        JSON.stringify(ended));
+  const kept = await rpc(admin, 'permissions_catalog');
+  check('...and the grant is still there afterwards',
+        kept.roles_effective.trial['clients.delete'] === true);
+  const vis = await (await rest(admin, 'visits?select=id')).json();
+  check('...while the data the prospect touched was still wiped',
+        vis.length === 216, 'visits=' + vis.length);
+  await rpc(admin, 'update_role_permissions',
+            { p_role: 'trial', p_perms: { 'clients.delete': false } });
   const mgr = await login('manager@demo.foxcrm.app', 'demo1234');
   check('a manager cannot either',
         (await refused(() => rpc(mgr, 'update_role_permissions',
